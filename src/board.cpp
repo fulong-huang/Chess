@@ -22,3 +22,7 @@ void ChessBoard::printBoard(){
     }
 }
 
+std::vector<char> ChessBoard::getBoard(){
+    return this->board;
+}
+

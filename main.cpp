@@ -1,10 +1,11 @@
 #include <cstdlib>
 #include <iostream>
-#include "src/board.h"
+#include "test/test.h"
 
 int main(int argc, char* argv[]){
-    ChessBoard board;
-    board.printBoard();
+
+    runTests();
+
     return EXIT_SUCCESS;
 }
 
