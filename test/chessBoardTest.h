@@ -11,4 +11,12 @@ void testBasicPawnMovement();
 
 void testBasicRookMovement();
 
+void testBasicKnightMovement();
+
+void testBasicBishopMovement();
+
+void testBasicQueenMovement();
+
+void testBasicKingMovement();
+
 
