@@ -15,6 +15,7 @@ public:
 private:
     int totalTest;
     int passedTest;
+    void printCompareResult(std::string msg, bool passed);
 };
 
 void runTests();

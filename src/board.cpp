@@ -2,15 +2,17 @@
 
 ChessBoard::ChessBoard(){
     this->board = {
-        'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R',
-        'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 
-        '-', '-', '-', '-', '-', '-', '-', '-', 
-        '-', '-', '-', '-', '-', '-', '-', '-', 
-        '-', '-', '-', '-', '-', '-', '-', '-', 
-        '-', '-', '-', '-', '-', '-', '-', '-', 
-        'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 
-        'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r',
+    //   0    1    2    3    4    5    6    7
+        'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R',  // 0
+        'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P',  // 1
+        '-', '-', '-', '-', '-', '-', '-', '-',  // 2
+        '-', '-', '-', '-', '-', '-', '-', '-',  // 3
+        '-', '-', '-', '-', '-', '-', '-', '-',  // 4
+        '-', '-', '-', '-', '-', '-', '-', '-',  // 5
+        'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p',  // 6
+        'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r',  // 7
     };
+    this->whiteTurn = true;
 }
 
 bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
@@ -27,6 +29,11 @@ bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
         return false;
     }
 
+    bool correctTurn = this->whiteTurn == (this->board[curr] > 97);
+    if(!correctTurn){
+        return false;
+    }
+    this->whiteTurn = !this->whiteTurn;
 
     this->board[target] = this->board[curr];
     this->board[curr] = '-';
@@ -57,5 +64,12 @@ void ChessBoard::printBoard(){
 
 std::vector<char> ChessBoard::getBoard(){
     return this->board;
+}
+
+
+ChessBoard& ChessBoard::operator=(ChessBoard board){
+    this->whiteTurn = board.whiteTurn;
+    this->board = board.getBoard();
+    return *this;
 }
 

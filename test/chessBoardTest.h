@@ -5,3 +5,8 @@
 
 void testChessBoard();
 
+void basicMovement();
+
+void validateMovement();
+
+

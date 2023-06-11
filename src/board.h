@@ -16,6 +16,7 @@ public:
     void printBoard();
     std::vector<char> getBoard();
 
+    ChessBoard& operator=(ChessBoard board);
 
 private:
     std::vector<char> board;
