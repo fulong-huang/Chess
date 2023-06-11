@@ -12,7 +12,7 @@ Test::Test(std::string message){
     std::cout << "=====" << message << "=====" << std::endl;
 }
 
-void Test::test(int expect, int actual, std::string message){
+void Test::compare(int expect, int actual, std::string message){
     this->totalTest++;
     std::cout << "    Test case: " << message;
     if(expect == actual){
