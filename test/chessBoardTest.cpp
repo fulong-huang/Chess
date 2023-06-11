@@ -119,7 +119,7 @@ void validateMovement(){
                 "Pawn 8"
             );
 
-    test.printResult("Invalid Movement sets: ");
+    test.printResult("Invalid Movement Test Result: ");
 }
 
 

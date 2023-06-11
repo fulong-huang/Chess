@@ -4,12 +4,12 @@ ChessBoard::ChessBoard(){
     this->board = {
     //   0    1    2    3    4    5    6    7
         'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R',  // 0 Black
-        'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P',  // 1
+        'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',  // 1
         '-', '-', '-', '-', '-', '-', '-', '-',  // 2
         '-', '-', '-', '-', '-', '-', '-', '-',  // 3
         '-', '-', '-', '-', '-', '-', '-', '-',  // 4
         '-', '-', '-', '-', '-', '-', '-', '-',  // 5
-        'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p',  // 6
+        'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a',  // 6
         'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r',  // 7 White
     };
     this->whiteTurn = true;
@@ -26,7 +26,7 @@ bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
         return false;
     }
 
-    bool correctTurn = this->whiteTurn == (this->board[curr] > 97);
+    bool correctTurn = this->whiteTurn == (this->board[curr] >= 97);
     if(!correctTurn){
         return false;
     }
@@ -61,7 +61,7 @@ bool ChessBoard::validateMovement(
     
     char movingPiece = std::tolower(this->board[curr]);
     switch(movingPiece){
-        case 'p':
+        case 'a':
             return checkPawnMovement(from, to);
             break;
         case 'r':
@@ -100,7 +100,7 @@ bool ChessBoard::checkPawnMovement(
             else if(colDiff == 1){
                 int facing = 8 * to.first + from.second;
                 bool enemyInFront = 
-                    this->board[facing] - 97 > 0 != 
+                    this->board[facing] - 96 > 0 != 
                     this->whiteTurn;
                 enemyInFront = enemyInFront && 
                     this->board[facing] != '-';
