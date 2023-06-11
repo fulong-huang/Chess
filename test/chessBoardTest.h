@@ -7,6 +7,8 @@ void testChessBoard();
 
 void basicMovement();
 
-void validateMovement();
+void testBasicPawnMovement();
+
+void testBasicRookMovement();
 
 

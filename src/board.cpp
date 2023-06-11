@@ -52,6 +52,11 @@ bool ChessBoard::validateMovement(
     if(this->board[curr] == '-'){
         return false;
     }
+    bool inPlaceMovement = 
+        from.first == to.first && from.second == to.second;
+    if(inPlaceMovement){
+        return false;
+    }
 //    if(this->board[target] != '-'){
 //        bool takeOwnPiece = this->whiteTurn == (this->board[target] >= 97);
 //        if(takeOwnPiece){
@@ -65,17 +70,21 @@ bool ChessBoard::validateMovement(
             return checkPawnMovement(from, to);
             break;
         case 'r':
+            return checkRookMovement(from, to);
             break;
         case 'n':
+            return checkKnightMovement(from, to);
             break;
         case 'b':
+            return checkBishopMovement(from, to);
             break;
         case 'q':
+            return checkQueenMovement(from, to);
             break;
         case 'k':
+            return checkKingMovement(from, to);
             break;
     }
-
     return true;
 }
 
@@ -137,6 +146,82 @@ bool ChessBoard::checkPawnMovement(
     return true;
 }
 
+bool ChessBoard::checkRookMovement(
+        std::pair<int, int> from, std::pair<int, int> to
+    ){
+    int curr = from.first * 8 + from.second;
+    int target = to.first * 8 + to.second;
+
+    bool isStraightLine = from.first == to.first || from.second == to.second;
+    if(!isStraightLine){
+        return false;
+    }
+    bool validTarget = 
+        this->board[target] == '-' ||
+        (
+            this->board[target] - 96 > 0 != 
+            this->whiteTurn
+        );
+    if(!validTarget){
+        return false;
+    }
+    int start, end;
+    if(from.first == to.first){
+        if(from.second > to.second){
+            start = to.second;
+            end = from.second;
+        }
+        else{
+            start = from.second;
+            end = to.second;
+        }
+        for(int i = start + 1; i < end; i++){
+            if(this->board[from.first * 8 + i] != '-'){
+                return false;
+            }
+        }
+    }
+    else{
+        if(from.first > to.first){
+            start = to.first;
+            end = from.first;
+        }
+        else{
+            start = from.first;
+            end = to.first;
+        }
+        for(int i = start + 1; i < end; i++){
+            if(this->board[i * 8 + from.second] != '-'){
+                return false;
+            }
+        }
+    }
+    
+    this->board[target] = this->board[curr];
+    this->board[curr] = '-';
+
+    return true;
+}
+bool ChessBoard::checkKnightMovement(
+        std::pair<int, int> from, std::pair<int, int> to
+    ){
+    return true;
+}
+bool ChessBoard::checkBishopMovement(
+        std::pair<int, int> from, std::pair<int, int> to
+    ){
+    return true;
+}
+bool ChessBoard::checkQueenMovement(
+        std::pair<int, int> from, std::pair<int, int> to
+    ){
+    return true;
+}
+bool ChessBoard::checkKingMovement(
+        std::pair<int, int> from, std::pair<int, int> to
+    ){
+    return true;
+}
 
 bool ChessBoard::compare(ChessBoard board2){
     std::vector<char> secondBoard = board2.getBoard();

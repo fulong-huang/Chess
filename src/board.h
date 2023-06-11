@@ -25,5 +25,10 @@ private:
     
     bool validateMovement(std::pair<int, int> from, std::pair<int, int> to);
     bool checkPawnMovement(std::pair<int, int> from, std::pair<int, int> to);
+    bool checkRookMovement(std::pair<int, int> from, std::pair<int, int> to);
+    bool checkKnightMovement(std::pair<int, int> from, std::pair<int, int> to);
+    bool checkBishopMovement(std::pair<int, int> from, std::pair<int, int> to);
+    bool checkQueenMovement(std::pair<int, int> from, std::pair<int, int> to);
+    bool checkKingMovement(std::pair<int, int> from, std::pair<int, int> to);
 };
 

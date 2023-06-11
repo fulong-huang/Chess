@@ -57,8 +57,15 @@ void Test::printCompareResult(std::string msg, bool passed){
     std::string outString = 
         "    Test Case " + std::to_string(this->totalTest) +  ": " + msg;
     int filterLen = 80 - outString.size();
+    char fillingChar = '-';
+    if(this->totalTest % 3 == 1){
+        fillingChar = '.';
+    }
+    else if(this->totalTest % 3 == 2){
+        fillingChar = '~';
+    }
     for(int i = 0; i < filterLen; i++){
-        outString += '-';
+        outString += fillingChar;
     }
 
     if(passed){

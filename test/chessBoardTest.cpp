@@ -2,7 +2,8 @@
 
 void testChessBoard(){
     basicMovement();
-    validateMovement();
+    testBasicPawnMovement();
+    testBasicRookMovement();
 }
 
 void basicMovement(){
@@ -70,9 +71,8 @@ void basicMovement(){
             );
 }
 
-
-void validateMovement(){
-    Test test("Testint constrained movement");
+void testBasicPawnMovement(){
+    Test test("Testing basic pawn movement");
     ChessBoard board, stage;
 
     // Failed Test might appear as passed
@@ -122,5 +122,121 @@ void validateMovement(){
     test.printResult("Invalid Movement Test Result: ");
 }
 
+void testBasicRookMovement(){
+    Test test("Testing Basic Rook Movement");
+    ChessBoard board, stage;
+
+    test.compare(
+            board.move({7, 0}, {7, 2}),
+            false,
+            "taking own piece"
+            );
+    
+    board = stage;
+    test.compare(
+            board.move({7, 0}, {5, 0}),
+            false,
+            "Jump Over Pawn"
+            );
+    
+    // setup
+    stage.move({6, 0}, {4, 0});
+    stage.move({1, 7}, {3, 7});
+
+    test.compare(stage.getBoard(),
+            {
+                'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R',  // 0 Black
+                'A', 'A', 'A', 'A', 'A', 'A', 'A', '-',  // 1
+                '-', '-', '-', '-', '-', '-', '-', '-',  // 2
+                '-', '-', '-', '-', '-', '-', '-', 'A',  // 3
+                'a', '-', '-', '-', '-', '-', '-', '-',  // 4
+                '-', '-', '-', '-', '-', '-', '-', '-',  // 5
+                '-', 'a', 'a', 'a', 'a', 'a', 'a', 'a',  // 6
+                'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r',  // 7 White
+            },
+            "Check curent board stage"
+        );
+
+    board = stage;
+    test.compare(
+                board.move({7, 0}, {4, 0}),
+                false,
+                "Taking own pawn"
+            );
+    board = stage;
+    test.compare(
+                board.move({7, 0}, {2, 0}),
+                false,
+                "Skip over own pawn"
+            );
+    test.compare(stage.getBoard(),
+            {
+                'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R',  // 0 Black
+                'A', 'A', 'A', 'A', 'A', 'A', 'A', '-',  // 1
+                '-', '-', '-', '-', '-', '-', '-', '-',  // 2
+                '-', '-', '-', '-', '-', '-', '-', 'A',  // 3
+                'a', '-', '-', '-', '-', '-', '-', '-',  // 4
+                '-', '-', '-', '-', '-', '-', '-', '-',  // 5
+                '-', 'a', 'a', 'a', 'a', 'a', 'a', 'a',  // 6
+                'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r',  // 7 White
+            },
+            "Check curent board stage"
+        );
+
+
+    test.compare(
+                stage.move({7, 0}, {5, 0}),
+                true,
+                "Move (W) Rook Up"
+            );
+    test.compare(
+                stage.move({0, 7}, {1, 7}),
+                true,
+                "Move (B) Rook Down"
+            );
+    test.compare(
+                stage.move({5, 0}, {5, 4}),
+                true,
+                "Move (W) Rook to middle"
+            );
+    test.compare(
+                stage.move({1, 0}, {3, 0}),
+                true,
+                "Move (B) Pawn Down"
+            );
+    test.compare(
+                stage.move({5, 4}, {1, 4}),
+                true,
+                "Take (B) Pawn"
+            );
+    test.compare(
+                stage.move({1, 6}, {3, 6}),
+                true,
+                "Move (B) Pawn Down"
+            );
+    board = stage;
+    test.compare(
+                board.move({1, 4}, {1, 0}),
+                false,
+                "Skip over Enemy pieces"
+            );
+    board = stage;
+    test.compare(
+                board.move({1, 4}, {1, 2}),
+                false,
+                "Take (B) Piece by Skip over Enemy pieces"
+            );
+    board = stage;
+    test.compare(
+                board.move({1, 4}, {1, 3}),
+                true,
+                "Take (B) Rook Hozontally"
+            );
+    test.compare(
+                board.move({1, 7}, {1, 2}),
+                false,
+                "Take (B) own piece"
+            );
+}
 
 
