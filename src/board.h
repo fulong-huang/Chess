@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <utility>
+#include <stdlib.h>
 
 
 class ChessBoard{
@@ -21,5 +22,8 @@ public:
 private:
     std::vector<char> board;
     bool whiteTurn;
+    
+    bool validateMovement(std::pair<int, int> from, std::pair<int, int> to);
+    bool checkPawnMovement(std::pair<int, int> from, std::pair<int, int> to);
 };
 
