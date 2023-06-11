@@ -1,6 +1,8 @@
 #include "board.h"
+#include <exception>
 
 ChessBoard::ChessBoard(){
+    this->whiteTurn = true;
     this->board = {
     //   0    1    2    3    4    5    6    7
         'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R',  // 0 Black
@@ -12,7 +14,6 @@ ChessBoard::ChessBoard(){
         'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a',  // 6
         'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r',  // 7 White
     };
-    this->whiteTurn = true;
 }
 
 bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
@@ -205,21 +206,99 @@ bool ChessBoard::checkRookMovement(
 bool ChessBoard::checkKnightMovement(
         std::pair<int, int> from, std::pair<int, int> to
     ){
+    int curr = from.first * 8 + from.second;
+    int target = to.first * 8 + to.second;
+    bool validTarget = 
+        this->board[target] == '-' ||
+        (
+            this->board[target] - 96 > 0 != 
+            this->whiteTurn
+        );
+    if(!validTarget){
+        return false;
+    }
+    int rowDiff = std::abs(from.first - to.first);
+    int colDiff = std::abs(from.second - to.second);
+//    if(std::abs(rowDiff - colDiff) != 1){
+//        return false;
+//    }
+    if(rowDiff != 1 && colDiff != 1 ||
+            rowDiff != 2 && colDiff != 2){
+        return false;
+    }
+    
+    this->board[target] = this->board[curr];
+    this->board[curr] = '-';
+
     return true;
 }
 bool ChessBoard::checkBishopMovement(
         std::pair<int, int> from, std::pair<int, int> to
     ){
+    int curr = from.first * 8 + from.second;
+    int target = to.first * 8 + to.second;
+    bool validTarget = 
+        this->board[target] == '-' ||
+        (
+            this->board[target] - 96 > 0 != 
+            this->whiteTurn
+        );
+    if(!validTarget){
+        return false;
+    }
+    int rowDiff = from.first - to.first;
+    int colDiff = from.second - to.second;
+    bool diagnalMovement = std::abs(rowDiff) == std::abs(colDiff);
+    if(!diagnalMovement){
+        return false;
+    }
+    
+    int start, end;
+    int increment;
+    if(rowDiff < 0){
+        if(colDiff < 0){
+            increment = 9;
+        }
+        else{
+            increment = 7;
+        }
+        start = curr + increment;
+        end = target;
+    }
+    else{
+        if(colDiff < 0){
+            increment = 7;
+        }
+        else{
+            increment = 9;
+        }
+        start = target + increment;
+        end = curr;
+    }
+    
+    for(int i = start; i != end; i += increment){
+        if(this->board[i] != '-'){
+            return false;
+        }
+    }
+
+    this->board[target] = this->board[curr];
+    this->board[curr] = '-';
+    
     return true;
 }
 bool ChessBoard::checkQueenMovement(
         std::pair<int, int> from, std::pair<int, int> to
     ){
+    int curr = from.first * 8 + from.second;
+    int target = to.first * 8 + to.second;
     return true;
 }
 bool ChessBoard::checkKingMovement(
         std::pair<int, int> from, std::pair<int, int> to
     ){
+    int curr = from.first * 8 + from.second;
+    int target = to.first * 8 + to.second;
     return true;
 }
 
