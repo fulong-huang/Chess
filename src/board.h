@@ -23,12 +23,12 @@ private:
     std::vector<char> board;
     bool whiteTurn;
     
-    bool validateMovement(std::pair<int, int> from, std::pair<int, int> to);
-    bool checkPawnMovement(std::pair<int, int> from, std::pair<int, int> to);
-    bool checkRookMovement(std::pair<int, int> from, std::pair<int, int> to);
-    bool checkKnightMovement(std::pair<int, int> from, std::pair<int, int> to);
-    bool checkBishopMovement(std::pair<int, int> from, std::pair<int, int> to);
-    bool checkQueenMovement(std::pair<int, int> from, std::pair<int, int> to);
-    bool checkKingMovement(std::pair<int, int> from, std::pair<int, int> to);
+    bool movePiece(std::pair<int, int> from, std::pair<int, int> to);
+    bool performPawnMovement(std::pair<int, int> from, std::pair<int, int> to);
+    bool performRookMovement(std::pair<int, int> from, std::pair<int, int> to);
+    bool performKnightMovement(std::pair<int, int> from, std::pair<int, int> to);
+    bool performBishopMovement(std::pair<int, int> from, std::pair<int, int> to);
+    bool performQueenMovement(std::pair<int, int> from, std::pair<int, int> to);
+    bool performKingMovement(std::pair<int, int> from, std::pair<int, int> to);
 };
 

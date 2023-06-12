@@ -1,22 +1,23 @@
 #pragma once
 #include <iostream>
 #include <utility>
+#include <vector>
 #include "test.h"
 
 void testChessBoard();
 
-void basicMovement();
+Test basicMovement();
 
-void testBasicPawnMovement();
+Test testBasicPawnMovement();
 
-void testBasicRookMovement();
+Test testBasicRookMovement();
 
-void testBasicKnightMovement();
+Test testBasicKnightMovement();
 
-void testBasicBishopMovement();
+Test testBasicBishopMovement();
 
-void testBasicQueenMovement();
+Test testBasicQueenMovement();
 
-void testBasicKingMovement();
+Test testBasicKingMovement();
 
 

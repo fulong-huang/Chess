@@ -1,10 +1,10 @@
 #include <cstdlib>
 #include <iostream>
-#include "test/test.h"
+#include "test/chessBoardTest.h"
 
 int main(int argc, char* argv[]){
 
-    runTests();
+    testChessBoard();
 
     return EXIT_SUCCESS;
 }

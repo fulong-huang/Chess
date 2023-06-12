@@ -1,14 +1,9 @@
 #include "test.h"
 
-
-void runTests(){
-    testChessBoard();
-}
-
-
 Test::Test(std::string message){
     this->totalTest = 0;
     this->passedTest = 0;
+    this->msg = message;
     int paddingLen = 92 - message.size();
     std::string padding = "";
     for(int i = 0; i < paddingLen; i += 2){
@@ -76,3 +71,43 @@ void Test::printCompareResult(std::string msg, bool passed){
     }
     std::cout << outString << "\n";
 }
+
+int Test::getTotalTestCount(){
+    return this->totalTest;
+}
+int Test::getPassedTestCount(){
+    return this->passedTest;
+}
+
+void Test::printTestSuit(std::vector<Test> testSuit){
+    std::string currMsg = "\n\n";
+    for(int i = 0; i < 89; i++){
+        currMsg += '=';
+    }
+    currMsg += '\n';
+    for(int i = 0; i < 40; i++){
+        currMsg += '=';
+    }
+    currMsg += " SUMMARY ";
+    for(int i = 0; i < 40; i++){
+        currMsg += '=';
+    }
+    currMsg += '\n';
+    for(int i = 0; i < 89; i++){
+        currMsg += '=';
+    }
+    std::cout << currMsg << "\n" << std::endl;
+    int filterLen;
+    for(Test t : testSuit){
+        currMsg = t.msg;
+        filterLen = 80 - currMsg.size();
+        for(int i = 0; i < filterLen; i++){
+            currMsg += '-';
+        }
+        std::cout << currMsg << "   " << 
+            t.getPassedTestCount() / t.getTotalTestCount() * 100 <<
+            "%" << std::endl;
+    }
+    std::cout << "\n\n";
+}
+

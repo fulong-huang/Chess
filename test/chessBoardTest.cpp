@@ -1,16 +1,18 @@
 #include "chessBoardTest.h"
 
 void testChessBoard(){
-    basicMovement();
-    testBasicPawnMovement();
-    testBasicRookMovement();
-    testBasicKnightMovement();
-    testBasicBishopMovement();
-    //testBasicQueenMovement();
-    //testBasicKingMovement();
+    std::vector<Test> testList;
+    testList.push_back(basicMovement());
+    testList.push_back(testBasicPawnMovement());
+    testList.push_back(testBasicRookMovement());
+    testList.push_back(testBasicKnightMovement());
+    testList.push_back(testBasicBishopMovement());
+    testList.push_back(testBasicQueenMovement());
+    testList.push_back(testBasicKingMovement());
+    Test::printTestSuit(testList);
 }
 
-void basicMovement(){
+Test basicMovement(){
     Test boardTest("Testing chess board functions");
     ChessBoard board1, board2;
     boardTest.compare(
@@ -73,9 +75,10 @@ void basicMovement(){
     boardTest.printResult(
             "Test Chess Board Result: "
             );
+    return boardTest;
 }
 
-void testBasicPawnMovement(){
+Test testBasicPawnMovement(){
     Test test("Testing basic pawn movement");
     ChessBoard board, stage;
 
@@ -124,9 +127,10 @@ void testBasicPawnMovement(){
             );
 
     test.printResult("Invalid Movement Test Result: ");
+    return test;
 }
 
-void testBasicKnightMovement(){
+Test testBasicKnightMovement(){
     Test test("Testing Basic Knight Movement");
     ChessBoard board, stage;
 
@@ -205,9 +209,10 @@ void testBasicKnightMovement(){
             "Capture Pawn (B) [Check Mate]"
             );
     
+    return test;
 }
 
-void testBasicBishopMovement(){
+Test testBasicBishopMovement(){
     Test test("Testing Basic Bishop Movement");
     ChessBoard board, stage;
 
@@ -317,9 +322,10 @@ void testBasicBishopMovement(){
                 },
                 "Check state of board"
             );
+    return test;
 }
 
-void testBasicQueenMovement(){
+Test testBasicQueenMovement(){
     Test test("Testing Basic Queen Movement");
     ChessBoard board, stage;
     test.compare(
@@ -351,6 +357,7 @@ void testBasicQueenMovement(){
     stage.move({6, 3}, {4, 3});
     stage.move({1, 4}, {3, 4});
     stage.move({7, 3}, {5, 3});
+    board = stage;
     test.compare(
                 board.getBoard(),
                 {
@@ -391,7 +398,7 @@ void testBasicQueenMovement(){
                 '-', '-', '-', '-', 'A', '-', '-', '-',  // 3
                 '-', '-', '-', 'a', '-', '-', '-', '-',  // 4
                 '-', '-', '-', 'q', '-', '-', '-', '-',  // 5
-                'a', 'a', 'a', '-', '-', 'a', 'a', 'a',  // 6
+                'a', 'a', 'a', '-', 'a', 'a', 'a', 'a',  // 6
                 'r', 'n', 'b', '-', 'k', 'b', 'n', 'r',  // 7 White
                 },
                 "Check state of board"
@@ -428,7 +435,7 @@ void testBasicQueenMovement(){
                 board.getBoard(),
                 {
             //   0    1    2    3    4    5    6    7
-                'R', 'N', 'B', '-', 'K', 'B', 'N', 'Q',  // 0 Black
+                'R', 'N', 'B', '-', 'K', 'B', 'N', 'q',  // 0 Black
                 'A', 'A', 'A', 'A', '-', 'A', 'A', '-',  // 1
                 '-', '-', '-', '-', '-', '-', '-', '-',  // 2
                 '-', '-', '-', '-', 'A', '-', '-', '-',  // 3
@@ -439,9 +446,10 @@ void testBasicQueenMovement(){
                 },
                 "Check state of board"
             );
+    return test;
 }
 
-void testBasicKingMovement(){
+Test testBasicKingMovement(){
     Test test("Testing Basic King Movement");
     ChessBoard board, stage;
     test.compare(
@@ -467,6 +475,7 @@ void testBasicKingMovement(){
     stage.move({6, 3}, {4, 3});
     stage.move({1, 4}, {3, 4});
     stage.move({7, 4}, {6, 3});
+    board = stage;
     test.compare(
                 board.getBoard(),
                 {
@@ -545,9 +554,10 @@ void testBasicKingMovement(){
                 },
                 "Check state of board"
             );
+    return test;
 }
 
-void testBasicRookMovement(){
+Test testBasicRookMovement(){
     Test test("Testing Basic Rook Movement");
     ChessBoard board, stage;
 
@@ -662,6 +672,6 @@ void testBasicRookMovement(){
                 false,
                 "Take (B) own piece"
             );
+    return test;
 }
-
 

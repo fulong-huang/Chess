@@ -32,8 +32,8 @@ bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
         return false;
     }
 
-    bool validMovement = this->validateMovement(from, to);
-    if(!validMovement){
+    bool movedPiece = this->movePiece(from, to);
+    if(!movedPiece){
         return false;
     }
 
@@ -45,7 +45,7 @@ bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
     return true;
 }
 
-bool ChessBoard::validateMovement(
+bool ChessBoard::movePiece(
     std::pair<int, int> from, std::pair<int, int> to
 ){
     int curr = from.first * 8 + from.second;
@@ -68,28 +68,59 @@ bool ChessBoard::validateMovement(
     char movingPiece = std::tolower(this->board[curr]);
     switch(movingPiece){
         case 'a':
-            return checkPawnMovement(from, to);
+            return performPawnMovement(from, to);
             break;
         case 'r':
-            return checkRookMovement(from, to);
+            return performRookMovement(from, to);
             break;
         case 'n':
-            return checkKnightMovement(from, to);
+            return performKnightMovement(from, to);
             break;
         case 'b':
-            return checkBishopMovement(from, to);
+            return performBishopMovement(from, to);
             break;
         case 'q':
-            return checkQueenMovement(from, to);
+            return performQueenMovement(from, to);
             break;
         case 'k':
-            return checkKingMovement(from, to);
+            return performKingMovement(from, to);
             break;
     }
     return true;
 }
 
-bool ChessBoard::checkPawnMovement(
+
+bool ChessBoard::compare(ChessBoard board2){
+    std::vector<char> secondBoard = board2.getBoard();
+    for(int i = 0; i < secondBoard.size(); i++){
+        if(this->board[i] != secondBoard[i]){
+            return false;
+        }
+    }
+    return true;
+}
+
+void ChessBoard::printBoard(){
+    for(int i = 0; i < this->board.size() / 8; i++){
+        for(int j = 0; j < 8; j++){
+            std::cout << this->board[i * 8 + j] << ' ';
+        }
+        std::cout << '\n';
+    }
+}
+
+std::vector<char> ChessBoard::getBoard(){
+    return this->board;
+}
+
+
+ChessBoard& ChessBoard::operator=(ChessBoard board){
+    this->whiteTurn = board.whiteTurn;
+    this->board = board.getBoard();
+    return *this;
+}
+
+bool ChessBoard::performPawnMovement(
     std::pair<int, int> from, std::pair<int, int> to
 ){
     int curr = from.first * 8 + from.second;
@@ -147,12 +178,12 @@ bool ChessBoard::checkPawnMovement(
     return true;
 }
 
-bool ChessBoard::checkRookMovement(
+
+bool ChessBoard::performRookMovement(
         std::pair<int, int> from, std::pair<int, int> to
-    ){
+){
     int curr = from.first * 8 + from.second;
     int target = to.first * 8 + to.second;
-
     bool isStraightLine = from.first == to.first || from.second == to.second;
     if(!isStraightLine){
         return false;
@@ -203,7 +234,8 @@ bool ChessBoard::checkRookMovement(
 
     return true;
 }
-bool ChessBoard::checkKnightMovement(
+
+bool ChessBoard::performKnightMovement(
         std::pair<int, int> from, std::pair<int, int> to
     ){
     int curr = from.first * 8 + from.second;
@@ -232,7 +264,8 @@ bool ChessBoard::checkKnightMovement(
 
     return true;
 }
-bool ChessBoard::checkBishopMovement(
+
+bool ChessBoard::performBishopMovement(
         std::pair<int, int> from, std::pair<int, int> to
     ){
     int curr = from.first * 8 + from.second;
@@ -276,7 +309,7 @@ bool ChessBoard::checkBishopMovement(
         end = curr;
     }
     
-    for(int i = start; i != end; i += increment){
+    for(int i = start; i < end; i += increment){
         if(this->board[i] != '-'){
             return false;
         }
@@ -287,48 +320,115 @@ bool ChessBoard::checkBishopMovement(
     
     return true;
 }
-bool ChessBoard::checkQueenMovement(
-        std::pair<int, int> from, std::pair<int, int> to
-    ){
-    int curr = from.first * 8 + from.second;
-    int target = to.first * 8 + to.second;
-    return true;
-}
-bool ChessBoard::checkKingMovement(
-        std::pair<int, int> from, std::pair<int, int> to
-    ){
-    int curr = from.first * 8 + from.second;
-    int target = to.first * 8 + to.second;
-    return true;
-}
 
-bool ChessBoard::compare(ChessBoard board2){
-    std::vector<char> secondBoard = board2.getBoard();
-    for(int i = 0; i < secondBoard.size(); i++){
-        if(this->board[i] != secondBoard[i]){
+bool ChessBoard::performQueenMovement(
+        std::pair<int, int> from, std::pair<int, int> to
+    ){
+    int curr = from.first * 8 + from.second;
+    int target = to.first * 8 + to.second;
+
+    int rowDiff = from.first - to.first;
+    int colDiff = from.second - to.second;
+
+    bool straightMovement = (
+                rowDiff == 0 || colDiff == 0
+            );
+    bool diagonalMovement = (
+                std::abs(rowDiff) ==
+                std::abs(colDiff)
+            );
+    if(!straightMovement && !diagonalMovement){
+        return false;
+    }
+    
+    bool validTarget = 
+        this->board[target] == '-' ||
+        (
+            this->board[target] - 96 > 0 != 
+            this->whiteTurn
+        );
+    if(!validTarget){
+        return false;
+    }
+
+    int start, end;
+    int increment;
+    if(straightMovement){
+        if(rowDiff == 0){
+            increment = 1;
+        }
+        else{
+            increment = 8;
+        }
+
+        if(rowDiff > 0 || colDiff > 0){
+            start = target + increment;
+            end = curr;
+        }
+        else{
+            start = curr + increment;
+            end = target;
+        }
+    }
+    else{
+        if(rowDiff > 0){
+            if(colDiff > 0){
+                increment = 9;
+            }
+            else{
+                increment = 7;
+            }
+            start = target + increment;
+            end = curr;
+        }
+        else{
+            if(colDiff > 0){
+                increment = 7;
+            }
+            else{
+                increment = 9;
+            }
+            start = curr + increment;
+            end = target;
+        }
+    }
+    for(int i = start; i < end; i += increment){
+        if(this->board[i] != '-'){
             return false;
         }
     }
+    
+    this->board[target] = this->board[curr];
+    this->board[curr] = '-';
+
     return true;
 }
 
-void ChessBoard::printBoard(){
-    for(int i = 0; i < this->board.size() / 8; i++){
-        for(int j = 0; j < 8; j++){
-            std::cout << this->board[i * 8 + j] << ' ';
-        }
-        std::cout << '\n';
+bool ChessBoard::performKingMovement(
+        std::pair<int, int> from, std::pair<int, int> to
+    ){
+    int curr = from.first * 8 + from.second;
+    int target = to.first * 8 + to.second;
+
+    int rowDiff = std::abs(from.first - to.first);
+    int colDiff = std::abs(from.second - to.second);
+
+    if(rowDiff > 1 || colDiff > 1){
+        return false;
     }
-}
 
-std::vector<char> ChessBoard::getBoard(){
-    return this->board;
-}
-
-
-ChessBoard& ChessBoard::operator=(ChessBoard board){
-    this->whiteTurn = board.whiteTurn;
-    this->board = board.getBoard();
-    return *this;
+    bool validTarget = 
+        this->board[target] == '-' ||
+        (
+            this->board[target] - 96 > 0 != 
+            this->whiteTurn
+        );
+    if(!validTarget){
+        return false;
+    }
+    
+    this->board[target] = this->board[curr];
+    this->board[curr] = '-';
+    return true;
 }
 
