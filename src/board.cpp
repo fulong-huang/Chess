@@ -42,6 +42,11 @@ bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
     return true;
 }
 
+
+bool ChessBoard::inCheck(){
+    return false;
+}
+
 bool ChessBoard::movePiece(
     std::pair<int, int> from, std::pair<int, int> to
 ){

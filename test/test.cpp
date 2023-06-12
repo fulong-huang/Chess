@@ -105,7 +105,7 @@ void Test::printTestSuit(std::vector<Test> testSuit){
             currMsg += '-';
         }
         std::cout << currMsg << "   " << 
-            t.getPassedTestCount() / t.getTotalTestCount() * 100 <<
+            t.getPassedTestCount() * 100 / t.getTotalTestCount() <<
             "%" << std::endl;
     }
     std::cout << "\n\n";

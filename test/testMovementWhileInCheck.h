@@ -5,11 +5,9 @@
 
 void testMovementWhileInCheck();
 
-Test testPawnMovement();
-Test testRookMovement();
-Test testKnightMovement();
-Test testMBishopovement();
-Test testQueenMovement();
-Test testKingMovement();
+Test testIfDetectCheck();
+Test testIfCheckLimitsMovement();
+Test testIfDetectCheckmate();
+
 
 

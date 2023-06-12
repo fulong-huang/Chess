@@ -9,6 +9,7 @@ add_executable(${PROJECT_NAME}
     src/board.cpp
     test/test.cpp
     test/testBasicMovement.cpp
+    test/testMovementWhileInCheck.cpp
 )
 
 

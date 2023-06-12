@@ -12,6 +12,7 @@ public:
     
     bool move(std::pair<int, int> from, std::pair<int, int> to);
 
+    bool inCheck();
     bool compare(ChessBoard board2);
 
     void printBoard();
