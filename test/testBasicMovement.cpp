@@ -1,8 +1,7 @@
-#include "chessBoardTest.h"
+#include "testBasicMovement.h"
 
-void testChessBoard(){
+void testBasicMovements(){
     std::vector<Test> testList;
-    testList.push_back(basicMovement());
     testList.push_back(testBasicPawnMovement());
     testList.push_back(testBasicRookMovement());
     testList.push_back(testBasicKnightMovement());
@@ -10,72 +9,6 @@ void testChessBoard(){
     testList.push_back(testBasicQueenMovement());
     testList.push_back(testBasicKingMovement());
     Test::printTestSuit(testList);
-}
-
-Test basicMovement(){
-    Test boardTest("Testing chess board functions");
-    ChessBoard board1, board2;
-    boardTest.compare(
-            board1.getBoard(), board2.getBoard(),
-            "Compare two initialized board"
-            );
-
-    boardTest.compare(
-            board1.move({0, 1}, {2, 2}), false,
-            "Move on WRONG turn (first try) "
-            );
-    boardTest.compare(
-            board1.move({0, 1}, {2, 2}), false,
-            "Move on WRONG turn (second try) "
-            );
-
-    boardTest.compare(
-            board1.move({7, 1}, {5, 2}), true,
-            "Move on correct turn"
-            );
-    boardTest.compare(
-            board1.move({5, 2}, {7, 1}), false,
-            "Moving same color twice"
-            );
-
-    boardTest.compare(
-            board1.compare(board2), false,
-            "Check if board differs after move"
-            );
-
-    boardTest.compare(
-            board1.move({0, 1}, {2, 2}), true,
-            "Black move"
-            );
-    boardTest.compare(
-            board1.move({5, 2}, {7, 1}), true,
-            "White move back"
-            );
-    boardTest.compare(
-            board1.move({2, 2}, {0, 1}), true,
-            "Black move back"
-            );
-
-    boardTest.compare(
-            board1.compare(board2), true,
-            "Check if board is same"
-            );
-
-    boardTest.compare(
-            board1.compare(board2), true,
-            "Check if board same after moving Knight back"
-            );
-
-    boardTest.compare(
-            board1.move({2, 2}, {3, 3}),  false,
-            "Move empty piece"
-            );
-
-
-    boardTest.printResult(
-            "Test Chess Board Result: "
-            );
-    return boardTest;
 }
 
 Test testBasicPawnMovement(){

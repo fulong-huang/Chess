@@ -8,7 +8,7 @@ add_executable(${PROJECT_NAME}
     main.cpp
     src/board.cpp
     test/test.cpp
-    test/chessBoardTest.cpp
+    test/testBasicMovement.cpp
 )
 
 

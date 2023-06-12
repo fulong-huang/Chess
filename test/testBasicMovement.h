@@ -1,12 +1,9 @@
-#pragma once
 #include <iostream>
 #include <utility>
 #include <vector>
 #include "test.h"
 
-void testChessBoard();
-
-Test basicMovement();
+void testBasicMovements();
 
 Test testBasicPawnMovement();
 
