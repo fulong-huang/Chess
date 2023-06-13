@@ -11,7 +11,7 @@ public:
 
     void compare(int expect, int actual, std::string message);
     void compare(std::vector<char> a, std::vector<char> b, std::string msg);
-    void printResult(std::string message);
+    void printResult();
     int getTotalTestCount();
     int getPassedTestCount();
     static void printTestSuit(std::vector<Test> testSuit);

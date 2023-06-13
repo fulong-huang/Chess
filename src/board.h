@@ -38,6 +38,7 @@ public:
 private:
     std::vector<char> board;
     bool whiteTurn;
+    int whiteKingPos, blackKingPos;
     
     bool movePiece(std::pair<int, int> from, std::pair<int, int> to);
     bool checkPawnMovement(std::pair<int, int> from, std::pair<int, int> to);
@@ -53,5 +54,7 @@ private:
     bool checkBishopMovement(int from, int to);
     bool checkQueenMovement(int from, int to);
     bool checkKingMovement(int from, int to);
+
+    bool pieceAtPosition(int piece, std::pair<int, int> pos);
 };
 

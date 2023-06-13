@@ -145,6 +145,7 @@ Test testIfDetectCheck(){
     test.compare(board.boardInCheck(), false,
             "Detect False Checked By Queen");
 
+    test.printResult();
     return test;
 }
 
@@ -285,9 +286,7 @@ Test testIfCheckLimitsMovement(){
     test.compare(board.move({3, 5}, {2, 5}), true,
             "Escaping check by Queen");
 
-    std::cout << "\t\tCheck If not false Detection" << std::endl;
-
-
+    test.printResult();
     return test;
 }
 
@@ -307,6 +306,7 @@ Test testIfDetectCheckmate(){
             });
     board = saved;
 
+    test.printResult();
     return test;
 }
 

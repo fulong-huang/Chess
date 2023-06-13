@@ -41,8 +41,8 @@ void Test::compare(std::vector<char> a, std::vector<char> b, std::string msg){
     this->passedTest++;
 }
 
-void Test::printResult(std::string message){
-    std::cout << message << 
+void Test::printResult(){
+    std::cout << "\n" << this->msg << ": " <<
         this->passedTest << "/" << this->totalTest << 
         "\n\n";
 }

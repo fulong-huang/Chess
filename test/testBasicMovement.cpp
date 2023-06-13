@@ -59,7 +59,7 @@ Test testBasicPawnMovement(){
                 "Pawn 8"
             );
 
-    test.printResult("Invalid Movement Test Result: ");
+    test.printResult();
     return test;
 }
 
@@ -142,6 +142,7 @@ Test testBasicKnightMovement(){
             "Capture Pawn (B) [Check Mate]"
             );
     
+    test.printResult();
     return test;
 }
 
@@ -255,6 +256,7 @@ Test testBasicBishopMovement(){
                 },
                 "Check state of board"
             );
+    test.printResult();
     return test;
 }
 
@@ -379,6 +381,7 @@ Test testBasicQueenMovement(){
                 },
                 "Check state of board"
             );
+    test.printResult();
     return test;
 }
 
@@ -487,6 +490,7 @@ Test testBasicKingMovement(){
                 },
                 "Check state of board"
             );
+    test.printResult();
     return test;
 }
 
@@ -571,7 +575,6 @@ Test testBasicRookMovement(){
                 true,
                 "Move (B) Pawn Down"
             );
-    stage.printBoard();
     test.compare(stage.getBoard(),
             {
                 'R', 'N', 'B', 'Q', 'K', 'B', 'N', '-',  // 0 Black
@@ -596,7 +599,6 @@ Test testBasicRookMovement(){
                 true,
                 "Take (W) ROOK with KING [Escape Check]"
             );
-    stage.printBoard();
     test.compare(stage.getBoard(),
             {
                 'R', 'N', 'B', 'Q', '-', 'B', 'N', '-',  // 0 Black
@@ -623,6 +625,7 @@ Test testBasicRookMovement(){
                 false,
                 "Take (B) Piece by Skip over Enemy pieces"
             );
+    test.printResult();
     return test;
 }
 

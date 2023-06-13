@@ -16,6 +16,8 @@ ChessBoard::ChessBoard(){
     for(int i = 48; i < this->board.size(); i++){
         this->board[i] += 10;
     }
+    this->whiteKingPos = 60;
+    this->blackKingPos = 4;
 }
 
 bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
@@ -44,71 +46,137 @@ bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
     return true;
 }
 
+bool ChessBoard::pieceAtPosition(int piece, std::pair<int, int> pos){
+    if(pos.first < 0 || pos.second < 0 ||
+            pos.first >= 8 || pos.second >= 8){
+        return false;
+    }
+    if(this->board[pos.first * 8 + pos.second] == piece) return true;
+    return false;
+}
 
 bool ChessBoard::boardInCheck(){
-    char kingChar = KING;
-    int kingPos;
+    int kingPos = this->blackKingPos;
     if(this->whiteTurn){
-        kingChar += 10;
+        kingPos = this->whiteKingPos;
     }
-    for(int i = 0; i < this->board.size(); i++){
-        if(this->board[i] == kingChar){
-            kingPos = i;
+
+    int x = kingPos / 8;
+    int y = kingPos % 8;
+    bool checkedByPawn;
+    int rook = ROOK;
+    int knight = KNIGHT;
+    int bishop = BISHOP;
+    int queen = QUEEN;
+    if(!this->whiteTurn){
+        rook += 10;
+        knight += 10;
+        bishop += 10;
+        queen += 10;
+        checkedByPawn = 
+            pieceAtPosition(PAWN + 10, {x + 1, y + 1}) ||
+            pieceAtPosition(PAWN + 10, {x + 1, y - 1});
+    }
+    else{
+        checkedByPawn = 
+            pieceAtPosition(PAWN, {x - 1, y + 1}) ||
+            pieceAtPosition(PAWN, {x - 1, y - 1});
+    }
+
+    if(checkedByPawn) return true;
+    bool checkedByKnight =
+        pieceAtPosition(knight, {x + 2, y + 1}) ||
+        pieceAtPosition(knight, {x + 2, y - 1}) ||
+        pieceAtPosition(knight, {x + 1, y + 2}) ||
+        pieceAtPosition(knight, {x + 1, y - 2}) ||
+        pieceAtPosition(knight, {x - 1, y + 2}) ||
+        pieceAtPosition(knight, {x - 1, y - 2}) ||
+        pieceAtPosition(knight, {x - 2, y + 1}) ||
+        pieceAtPosition(knight, {x - 2, y - 1});
+    if(checkedByKnight) return true;
+        
+    for(int i = x - 1; i >= 0; i--){
+        int pos = i * 8 + y;
+        if(this->board[pos] == rook ||
+                this->board[pos] == queen){
+            return true;
+        }
+        else if(this->board[pos] != 0){
+            break;
+        }
+    }
+    for(int i = x + 1; i < 8; i++){
+        int pos = i * 8 + y;
+        if(this->board[pos] == rook ||
+                this->board[pos] == queen){
+            return true;
+        }
+        else if(this->board[pos] != 0){
+            break;
+        }
+    }
+    for(int j = y + 1; j < 8; j++){
+        int pos = x * 8 + j;
+        if(this->board[pos] == rook ||
+                this->board[pos] == queen){
+            return true;
+        }
+        else if(this->board[pos] != 0){
+            break;
+        }
+    }
+    for(int j = y - 1; j >= 0; j--){
+        int pos = x * 8 + j;
+        if(this->board[pos] == rook ||
+                this->board[pos] == queen){
+            return true;
+        }
+        else if(this->board[pos] != 0){
             break;
         }
     }
 
-    this->whiteTurn = !this->whiteTurn;
-    for(int i = 0; i < this->board.size(); i++){
-        if(this->board[i] == 0){
-            continue;
+    for(int i = 1; x + i < 8 && y + i < 8; i++){
+        int pos = (x + i) * 8 + (y + i);
+        if(this->board[pos] == bishop ||
+                this->board[pos] == queen){
+            return true;
         }
-        bool isOpponent = this->whiteTurn != this->board[i] < 10;
-        if(!isOpponent){
-            continue;
-        }
-        switch(this->board[i] % 10){
-            case PAWN:{
-                         if(this->checkPawnMovement(i, kingPos)){
-                             this->whiteTurn = !this->whiteTurn;
-                             return true;
-                         }
-                         break;
-                     }
-            case ROOK:{
-                         if(this->checkRookMovement(i, kingPos)){
-                             this->whiteTurn = !this->whiteTurn;
-                             return true;
-                         }
-                         break;
-                     }
-            case KNIGHT:{
-                         if(this->checkKnightMovement(i, kingPos)){
-                             this->whiteTurn = !this->whiteTurn;
-                             return true;
-                         }
-                         break;
-                     }
-            case BISHOP:{
-                         if(this->checkBishopMovement(i, kingPos)){
-                             this->whiteTurn = !this->whiteTurn;
-                             return true;
-                         }
-                         break;
-                     }
-            case QUEEN:{
-                         if(this->checkQueenMovement(i, kingPos)){
-                             this->whiteTurn = !this->whiteTurn;
-                             return true;
-                         }
-                         break;
-                     }
-//            case KING:{
-//                         break;
-//                     }
+        else if(this->board[pos] != 0){
+            break;
         }
     }
-    this->whiteTurn = !this->whiteTurn;
+    for(int i = 1; x + i < 8 && y - i >= 0; i++){
+        int pos = (x + i) * 8 + (y - i);
+        if(this->board[pos] == bishop ||
+                this->board[pos] == queen){
+            return true;
+        }
+        else if(this->board[pos] != 0){
+            break;
+        }
+    }
+    for(int i = 1; x - i >= 0 && y + i < 8; i++){
+        int pos = (x - i) * 8 + (y + i);
+        if(this->board[pos] == bishop ||
+                this->board[pos] == queen){
+            return true;
+        }
+        else if(this->board[pos] != 0){
+            break;
+        }
+    }
+    for(int i = 1; x - i >= 0 && y - i >= 0; i++){
+        int pos = (x - i) * 8 + (y - i);
+        if(this->board[pos] == bishop ||
+                this->board[pos] == queen){
+            return true;
+        }
+        else if(this->board[pos] != 0){
+            break;
+        }
+    }
+
     return false;
 }
 
@@ -175,6 +243,14 @@ bool ChessBoard::movePiece(
             }
             break;
     }
+    int bKingPos = this->blackKingPos;
+    int wKingPos = this->whiteKingPos;
+    if(this->board[curr] == KING){
+        this->blackKingPos = target;
+    }
+    else if(this->board[curr] == KING + 10){
+        this->whiteKingPos = target;
+    }
     char targetChar = this->board[target];
     char currChar = this->board[curr];
     this->board[target] = currChar;
@@ -182,6 +258,8 @@ bool ChessBoard::movePiece(
     if(boardInCheck()){
         this->board[target] = targetChar;
         this->board[curr] = currChar;
+        this->whiteKingPos = wKingPos;
+        this->blackKingPos = bKingPos;
         return false;
     }
     return isValidMove;
@@ -541,7 +619,6 @@ bool ChessBoard::checkKingMovement(int from, int to){
 }
 
 void ChessBoard::setBoard(std::vector<char> newBoard, bool turn){
-    this->board.clear();
     for(int i = 0; i < newBoard.size(); i++){
         char piece;
         switch(toupper(newBoard[i])){
@@ -563,21 +640,31 @@ void ChessBoard::setBoard(std::vector<char> newBoard, bool turn){
             case 'Q':
                 piece = QUEEN;
                 break;
-            case 'K':
-                piece = KING;
-                break;
+            case 'K':{
+                         if(newBoard[i] < 97){
+                             this->blackKingPos = i;
+                         }
+                         else{
+                             this->whiteKingPos = i;
+                         }
+                         piece = KING;
+                         break;
+                     }
         }
         if(newBoard[i] >= 97){
             piece += 10;
         }
-        this->board.push_back(piece);
+        newBoard[i] = piece;
     }
     this->whiteTurn = turn;
+    this->board = newBoard;
 }
 
 ChessBoard& ChessBoard::operator=(ChessBoard board){
     this->whiteTurn = board.whiteTurn;
     this->board = board.board;
+    this->whiteKingPos = board.whiteKingPos;
+    this->blackKingPos = board.blackKingPos;
     return *this;
 }
 
