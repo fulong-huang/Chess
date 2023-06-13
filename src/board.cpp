@@ -42,7 +42,7 @@ bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
 }
 
 
-bool ChessBoard::inCheck(){
+bool ChessBoard::boardInCheck(){
     char kingChar = 'K';
     int kingPos;
     if(this->whiteTurn){
@@ -54,44 +54,58 @@ bool ChessBoard::inCheck(){
             break;
         }
     }
-    
+
+    this->whiteTurn = !this->whiteTurn;
     for(int i = 0; i < this->board.size(); i++){
         if(this->board[i] == '-'){
             continue;
         }
-        bool isOpponent = 
-            (
-                this->whiteTurn && this->board[i] < 97
-            ) || 
-            (
-                !this->whiteTurn && this->board[i] >= 97
-            );
+        bool isOpponent = this->whiteTurn != this->board[i] < 90;
         if(!isOpponent){
             continue;
         }
         switch(std::toupper(this->board[i])){
             case 'A':{
-                         if(checkPawnMovement(i, kingPos))
+                         if(this->checkPawnMovement(i, kingPos)){
+                             this->whiteTurn = !this->whiteTurn;
                              return true;
+                         }
                          break;
                      }
             case 'R':{
+                         if(this->checkRookMovement(i, kingPos)){
+                             this->whiteTurn = !this->whiteTurn;
+                             return true;
+                         }
                          break;
                      }
             case 'N':{
+                         if(this->checkKnightMovement(i, kingPos)){
+                             this->whiteTurn = !this->whiteTurn;
+                             return true;
+                         }
                          break;
                      }
             case 'B':{
+                         if(this->checkBishopMovement(i, kingPos)){
+                             this->whiteTurn = !this->whiteTurn;
+                             return true;
+                         }
                          break;
                      }
             case 'Q':{
+                         if(this->checkQueenMovement(i, kingPos)){
+                             this->whiteTurn = !this->whiteTurn;
+                             return true;
+                         }
                          break;
                      }
-            case 'K':{
-                         break;
-                     }
+//            case 'K':{
+//                         break;
+//                     }
         }
     }
+    this->whiteTurn = !this->whiteTurn;
     return false;
 }
 

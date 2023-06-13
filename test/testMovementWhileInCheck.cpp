@@ -9,7 +9,7 @@ void testMovementWhileInCheck(){
 Test testIfDetectCheck(){
     Test test("Test if In Check");
     ChessBoard board;
-    test.compare(board.inCheck(), false,
+    test.compare(board.boardInCheck(), false,
             "Not In Check When Game Start");
     board.setBoard({
     //   0    1    2    3    4    5    6    7
@@ -22,7 +22,7 @@ Test testIfDetectCheck(){
         '-', '-', '-', '-', '-', '-', '-', '-',  // 6
         '-', '-', '-', '-', '-', '-', '-', 'r',  // 7
             });
-    test.compare(board.inCheck(), true,
+    test.compare(board.boardInCheck(), true,
             "Detect Checked By Pawn");
     board.setBoard({
     //   0    1    2    3    4    5    6    7
@@ -35,7 +35,7 @@ Test testIfDetectCheck(){
         '-', '-', '-', '-', '-', '-', '-', '-',  // 6
         '-', '-', '-', '-', '-', '-', '-', 'r',  // 7
             });
-    test.compare(board.inCheck(), true,
+    test.compare(board.boardInCheck(), true,
             "Detect Checked By Rook");
     board.setBoard({
     //   0    1    2    3    4    5    6    7
@@ -48,7 +48,7 @@ Test testIfDetectCheck(){
         '-', '-', '-', '-', '-', '-', '-', '-',  // 6
         '-', '-', '-', '-', '-', '-', '-', 'r',  // 7
             });
-    test.compare(board.inCheck(), true,
+    test.compare(board.boardInCheck(), true,
             "Detect Checked By Knight");
     board.setBoard({
     //   0    1    2    3    4    5    6    7
@@ -61,7 +61,7 @@ Test testIfDetectCheck(){
         '-', '-', '-', '-', '-', '-', '-', '-',  // 6
         '-', '-', '-', '-', '-', '-', '-', 'r',  // 7
             });
-    test.compare(board.inCheck(), true,
+    test.compare(board.boardInCheck(), true,
             "Detect Checked By Bishop");
     board.setBoard({
     //   0    1    2    3    4    5    6    7
@@ -74,7 +74,7 @@ Test testIfDetectCheck(){
         '-', '-', 'Q', '-', '-', '-', '-', '-',  // 6
         '-', '-', '-', '-', '-', '-', '-', 'r',  // 7
             });
-    test.compare(board.inCheck(), true,
+    test.compare(board.boardInCheck(), true,
             "Detect Checked By Queen");
 
     std::cout << "\t\tCheck If not false Detection" << std::endl;
@@ -89,7 +89,7 @@ Test testIfDetectCheck(){
         '-', '-', '-', '-', '-', '-', '-', '-',  // 6
         '-', '-', '-', '-', '-', '-', '-', 'r',  // 7
             });
-    test.compare(board.inCheck(), false,
+    test.compare(board.boardInCheck(), false,
             "Detect if False Checked By Pawn");
     board.setBoard({
     //   0    1    2    3    4    5    6    7
@@ -102,7 +102,7 @@ Test testIfDetectCheck(){
         '-', '-', '-', '-', '-', '-', '-', '-',  // 6
         '-', '-', '-', '-', '-', '-', '-', 'r',  // 7
             });
-    test.compare(board.inCheck(), false,
+    test.compare(board.boardInCheck(), false,
             "Detect False Checked By Rook");
 //    board.setBoard({
 //    //   0    1    2    3    4    5    6    7
@@ -115,7 +115,7 @@ Test testIfDetectCheck(){
 //        '-', '-', '-', '-', '-', '-', '-', '-',  // 6
 //        '-', '-', '-', '-', '-', '-', '-', 'r',  // 7
 //            });
-//    test.compare(board.inCheck(), true,
+//    test.compare(board.boardInCheck(), true,
 //            "Detect Checked By Knight");
     board.setBoard({
     //   0    1    2    3    4    5    6    7
@@ -128,7 +128,7 @@ Test testIfDetectCheck(){
         '-', '-', '-', '-', '-', '-', '-', '-',  // 6
         '-', '-', '-', '-', '-', '-', '-', 'r',  // 7
             });
-    test.compare(board.inCheck(), false,
+    test.compare(board.boardInCheck(), false,
             "Detect False Checked By Bishop");
     board.setBoard({
     //   0    1    2    3    4    5    6    7
@@ -141,7 +141,7 @@ Test testIfDetectCheck(){
         '-', '-', 'Q', '-', '-', '-', '-', '-',  // 6
         '-', '-', '-', '-', '-', '-', '-', 'r',  // 7
             });
-    test.compare(board.inCheck(), false,
+    test.compare(board.boardInCheck(), false,
             "Detect False Checked By Queen");
 
     return test;
