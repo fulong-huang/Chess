@@ -32,5 +32,12 @@ private:
     bool checkBishopMovement(std::pair<int, int> from, std::pair<int, int> to);
     bool checkQueenMovement(std::pair<int, int> from, std::pair<int, int> to);
     bool checkKingMovement(std::pair<int, int> from, std::pair<int, int> to);
+
+    bool checkPawnMovement(int from, int to);
+    bool checkRookMovement(int from, int to);
+    bool checkKnightMovement(int from, int to);
+    bool checkBishopMovement(int from, int to);
+    bool checkQueenMovement(int from, int to);
+    bool checkKingMovement(int from, int to);
 };
 

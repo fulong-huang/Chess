@@ -1,5 +1,4 @@
 #include "board.h"
-#include <exception>
 
 ChessBoard::ChessBoard(){
     this->whiteTurn = true;
@@ -44,6 +43,55 @@ bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
 
 
 bool ChessBoard::inCheck(){
+    char kingChar = 'K';
+    int kingPos;
+    if(this->whiteTurn){
+        kingChar = 'k';
+    }
+    for(int i = 0; i < this->board.size(); i++){
+        if(this->board[i] == kingChar){
+            kingPos = i;
+            break;
+        }
+    }
+    
+    for(int i = 0; i < this->board.size(); i++){
+        if(this->board[i] == '-'){
+            continue;
+        }
+        bool isOpponent = 
+            (
+                this->whiteTurn && this->board[i] < 97
+            ) || 
+            (
+                !this->whiteTurn && this->board[i] >= 97
+            );
+        if(!isOpponent){
+            continue;
+        }
+        switch(std::toupper(this->board[i])){
+            case 'A':{
+                         if(checkPawnMovement(i, kingPos))
+                             return true;
+                         break;
+                     }
+            case 'R':{
+                         break;
+                     }
+            case 'N':{
+                         break;
+                     }
+            case 'B':{
+                         break;
+                     }
+            case 'Q':{
+                         break;
+                     }
+            case 'K':{
+                         break;
+                     }
+        }
+    }
     return false;
 }
 
@@ -73,24 +121,9 @@ bool ChessBoard::movePiece(
     switch(movingPiece){
         case 'a':
         {
-            bool emptyTargetLocation = this->board[target] == '-';
-            if(!emptyTargetLocation){
-                return false;
-            }
             isValidMove = checkPawnMovement(from, to);
             if(! isValidMove){
                 return false;
-            }
-            bool takingEnemy = from.second != to.second;
-            if(takingEnemy){
-                int enemyIndex = curr;
-                if(this->whiteTurn){
-                    enemyIndex -= 8;
-                }
-                else{
-                    enemyIndex += 8;
-                }
-                this->board[enemyIndex] = '-';
             }
             break;
          }
@@ -160,34 +193,39 @@ bool ChessBoard::checkPawnMovement(
 ){
     int curr = from.first * 8 + from.second;
     int target = to.first * 8 + to.second;
-    
-    int rowDiff = std::abs(from.first - to.first);
+
+    int rowDiff;
     int colDiff = std::abs(from.second - to.second);
 
-    int facing = curr;
     if(this->whiteTurn){
-        facing -= 8;
+        if(from.first <= to.first) return false;
+        rowDiff = from.first - to.first;
     }
     else{
-        facing += 8;
+        if(from.first >= to.first) return false;
+        rowDiff = to.first - from.first;
     }
+    
     switch(rowDiff){
         case 1: {
             if(colDiff == 1){
-                bool enemyInFront = 
-                    this->board[facing] - 96 > 0 != 
+                bool enemyTarget = 
+                    this->board[target] - 96 > 0 != 
                     this->whiteTurn;
-                enemyInFront = enemyInFront && 
-                    this->board[facing] != '-';
-
-                if(!enemyInFront){
+                if(!enemyTarget || this->board[target] == '-'){
                     return false;
                 }
+            }
+            else{
+                return false;
             }
             break;
         }
         case 2: {
             if(colDiff != 0) return false;
+            if(this->board[target] != '-'){
+                return false;
+            }
             int middleRow = (from.first + to.first)/2;
             int middleIdx = 8 * middleRow + to.second;
             bool somethingInBetween = this->board[middleIdx] != '-';
@@ -200,7 +238,6 @@ bool ChessBoard::checkPawnMovement(
         default:
             return false;
     }
-    
     return true;
 }
 
@@ -439,6 +476,25 @@ bool ChessBoard::checkKingMovement(
         return false;
     }
     return true;
+}
+
+bool ChessBoard::checkPawnMovement(int from, int to){
+    return this->checkPawnMovement({from / 8, from % 8}, {to / 8, to % 8});
+}
+bool ChessBoard::checkRookMovement(int from, int to){
+    return this->checkRookMovement({from / 8, from % 8}, {to / 8, to % 8});
+}
+bool ChessBoard::checkKnightMovement(int from, int to){
+    return this->checkKnightMovement({from/8, from%8}, {to/8, to%8});
+}
+bool ChessBoard::checkBishopMovement(int from, int to){
+    return this->checkBishopMovement({from/8, from%8}, {to/8, to%8});
+}
+bool ChessBoard::checkQueenMovement(int from, int to){
+    return this->checkQueenMovement({from/8, from%8}, {to/8, to%8});
+}
+bool ChessBoard::checkKingMovement(int from, int to){
+    return this->checkKingMovement({from/8, from%8}, {to/8, to%8});
 }
 
 void ChessBoard::setBoard(std::vector<char> newBoard, bool turn){
