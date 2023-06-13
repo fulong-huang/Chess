@@ -571,16 +571,46 @@ Test testBasicRookMovement(){
                 true,
                 "Move (B) Pawn Down"
             );
+    stage.printBoard();
+    test.compare(stage.getBoard(),
+            {
+                'R', 'N', 'B', 'Q', 'K', 'B', 'N', '-',  // 0 Black
+                '-', 'A', 'A', 'A', 'A', 'A', 'A', 'R',  // 1
+                '-', '-', '-', '-', '-', '-', '-', '-',  // 2
+                'A', '-', '-', '-', '-', '-', '-', 'A',  // 3
+                'a', '-', '-', '-', '-', '-', '-', '-',  // 4
+                '-', '-', '-', '-', 'r', '-', '-', '-',  // 5
+                '-', 'a', 'a', 'a', 'a', 'a', 'a', 'a',  // 6
+                '-', 'n', 'b', 'q', 'k', 'b', 'n', 'r',  // 7 White
+            },
+            "Check curent board stage"
+        );
+
     test.compare(
                 stage.move({5, 4}, {1, 4}),
                 true,
                 "Take (B) Pawn"
             );
     test.compare(
-                stage.move({1, 6}, {3, 6}),
+                stage.move({0, 4}, {1, 4}),
                 true,
-                "Move (B) Pawn Down"
+                "Take (W) ROOK with KING [Escape Check]"
             );
+    stage.printBoard();
+    test.compare(stage.getBoard(),
+            {
+                'R', 'N', 'B', 'Q', '-', 'B', 'N', '-',  // 0 Black
+                '-', 'A', 'A', 'A', 'K', 'A', 'A', 'R',  // 1
+                '-', '-', '-', '-', '-', '-', '-', '-',  // 2
+                'A', '-', '-', '-', '-', '-', '-', 'A',  // 3
+                'a', '-', '-', '-', '-', '-', '-', '-',  // 4
+                '-', '-', '-', '-', '-', '-', '-', '-',  // 5
+                '-', 'a', 'a', 'a', 'a', 'a', 'a', 'a',  // 6
+                '-', 'n', 'b', 'q', 'k', 'b', 'n', 'r',  // 7 White
+            },
+            "Check curent board stage"
+        );
+
     board = stage;
     test.compare(
                 board.move({1, 4}, {1, 0}),
@@ -592,17 +622,6 @@ Test testBasicRookMovement(){
                 board.move({1, 4}, {1, 2}),
                 false,
                 "Take (B) Piece by Skip over Enemy pieces"
-            );
-    board = stage;
-    test.compare(
-                board.move({1, 4}, {1, 3}),
-                true,
-                "Take (B) Rook Hozontally"
-            );
-    test.compare(
-                board.move({1, 7}, {1, 2}),
-                false,
-                "Take (B) own piece"
             );
     return test;
 }

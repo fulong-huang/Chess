@@ -175,8 +175,15 @@ bool ChessBoard::movePiece(
             }
             break;
     }
-    this->board[target] = this->board[curr];
+    char targetChar = this->board[target];
+    char currChar = this->board[curr];
+    this->board[target] = currChar;
     this->board[curr] = 0;
+    if(boardInCheck()){
+        this->board[target] = targetChar;
+        this->board[curr] = currChar;
+        return false;
+    }
     return isValidMove;
 }
 
@@ -247,6 +254,9 @@ bool ChessBoard::checkPawnMovement(
     
     switch(rowDiff){
         case 1: {
+            if(colDiff == 0){
+                return this->board[target] == 0;
+            }
             if(colDiff == 1){
                 bool enemyTarget = 
                     this->whiteTurn == (this->board[target] < 10);
@@ -557,7 +567,7 @@ void ChessBoard::setBoard(std::vector<char> newBoard, bool turn){
                 piece = KING;
                 break;
         }
-        if(newBoard[i] > 97){
+        if(newBoard[i] >= 97){
             piece += 10;
         }
         this->board.push_back(piece);

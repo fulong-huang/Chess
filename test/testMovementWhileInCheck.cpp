@@ -3,6 +3,7 @@
 void testMovementWhileInCheck(){
     std::vector<Test> testLists;
     testLists.push_back(testIfDetectCheck());
+    testLists.push_back(testIfCheckLimitsMovement());
     Test::printTestSuit(testLists);
 }
 
