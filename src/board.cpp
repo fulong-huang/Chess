@@ -20,6 +20,8 @@ ChessBoard::ChessBoard(){
     this->blackKingPos = 4;
     this->findValidMovements();
     this->gameRunning = true;
+    this->whitePassant = -64;
+    this->blackPassant = -64;
 }
 
 void ChessBoard::findValidMovements(){
@@ -470,7 +472,7 @@ std::vector<char> ChessBoard::getBoard(){
     return copy;
 }
 
-
+ //////////////// CHECK MOVEMENTS ////////////////////////
 bool ChessBoard::checkPawnMovement(
     std::pair<int, int> from, std::pair<int, int> to
 ){
@@ -822,6 +824,8 @@ bool ChessBoard::checkKingMovement(int from, int to){
 }
 
 void ChessBoard::setBoard(std::vector<char> newBoard, bool turn){
+    this->whiteKingPos = -64;
+    this->blackKingPos = -64;
     for(int i = 0; i < newBoard.size(); i++){
         char piece;
         switch(toupper(newBoard[i])){
@@ -863,6 +867,8 @@ void ChessBoard::setBoard(std::vector<char> newBoard, bool turn){
     this->board = newBoard;
     this->gameRunning = true;
     this->findValidMovements();
+    this->whitePassant = -64;
+    this->blackPassant = -64;
 }
 
 ChessBoard& ChessBoard::operator=(ChessBoard board){
@@ -872,5 +878,7 @@ ChessBoard& ChessBoard::operator=(ChessBoard board){
     this->blackKingPos = board.blackKingPos;
     this->gameRunning = board.gameRunning;
     this->findValidMovements();
+    this->whitePassant = board.whitePassant;
+    this->blackPassant = board.blackPassant;
     return *this;
 }

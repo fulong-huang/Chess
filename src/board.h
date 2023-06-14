@@ -44,6 +44,7 @@ private:
     bool gameRunning;
     int whiteKingPos, blackKingPos;
     std::map<int, std::vector<int>> validMovements;
+    int whitePassant, blackPassant;
 
     void switchTurn();
     void findValidMovements();

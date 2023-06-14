@@ -10,6 +10,7 @@ add_executable(${PROJECT_NAME}
     test/test.cpp
     test/testBasicMovement.cpp
     test/testMovementWhileInCheck.cpp
+    test/testSpecialMoves.cpp
 )
 
 
