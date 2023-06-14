@@ -3,7 +3,7 @@
 ChessBoard::ChessBoard(){
     this->whiteTurn = true;
     this->board = {
-    //   0    1    2    3    4    5    6    7
+    //   0      1       2       3       4       5       6       7
         ROOK,   KNIGHT, BISHOP, QUEEN,  KING,   BISHOP, KNIGHT, ROOK,   // 0
         PAWN,   PAWN,   PAWN,   PAWN,   PAWN,   PAWN,   PAWN,   PAWN,   // 1
         EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  // 2
@@ -20,9 +20,223 @@ ChessBoard::ChessBoard(){
     this->blackKingPos = 4;
 }
 
+void ChessBoard::findValidMovements(){
+    this->validMovements.clear();
+    for(int i = 0; i < this->board.size(); i++){
+        if(this->board[i] == 0){
+            continue;
+        }
+        if(this->board[i] > 10 != this->whiteTurn){
+            continue;
+        }
+        int row = i / 8;
+        int col = i % 8;
+        this->validMovements[i] = {};
+        switch(this->board[i] % 10){
+            case PAWN:
+                {
+                    if(checkPawnMovement(i, {row + 1, col + 1}) &&
+                            this->validateMove(i, i + 9)){
+                        this->validMovements[i].push_back(i + 9);
+                    }
+                    if(checkPawnMovement(i, {row + 1, col - 1}) && 
+                            this->validateMove(i, i - 9)){
+                        this->validMovements[i].push_back(i - 9);
+                    }
+                    if(checkPawnMovement(i, {row - 1, col + 1}) && 
+                            this->validateMove(i, i - 7)){
+                        this->validMovements[i].push_back(i - 7);
+                    }
+                    if(checkPawnMovement(i, {row - 1, col - 1}) && 
+                            this->validateMove(i, i - 9)){
+                        this->validMovements[i].push_back(i - 9);
+                    }
+                    if(checkPawnMovement(i, {row + 1, col}) && 
+                            this->validateMove(i, i + 8)){
+                        this->validMovements[i].push_back(i + 8);
+                    }
+                    if(checkPawnMovement(i, {row - 1, col}) && 
+                            this->validateMove(i, i - 8)){
+                        this->validMovements[i].push_back(i - 8);
+                    }
+                    if(checkPawnMovement(i, {row + 2, col}) && 
+                            this->validateMove(i, i + 16)){
+                        this->validMovements[i].push_back(i + 16);
+                    }
+                    if(checkPawnMovement(i, {row - 2, col}) && 
+                            this->validateMove(i, i - 16)){
+                        this->validMovements[i].push_back(i - 16);
+                    }
+                    break;
+                }
+            case KNIGHT:
+                {
+                    if(checkKnightMovement(i, {row + 1, col + 2}) &&
+                            this->validateMove(i, i + 10)){
+                        this->validMovements[i].push_back(i + 10);
+                    }
+                    if(checkKnightMovement(i, {row + 1, col - 2}) &&
+                            this->validateMove(i, i + 6)){
+                        this->validMovements[i].push_back(i + 6);
+                    }
+                    if(checkKnightMovement(i, {row - 1, col + 2}) && 
+                            this->validateMove(i, i - 6)){
+                        this->validMovements[i].push_back(i - 6);
+                    }
+                    if(checkKnightMovement(i, {row - 1, col - 2}) && 
+                            this->validateMove(i, i - 10)){
+                        this->validMovements[i].push_back(i - 10);
+                    }
+
+                    if(checkKnightMovement(i, {row + 2, col + 1}) &&
+                            this->validateMove(i, i + 17)){
+                        this->validMovements[i].push_back(i + 17);
+                    }
+                    if(checkKnightMovement(i, {row + 2, col - 1}) && 
+                            this->validateMove(i, i + 15)){
+                        this->validMovements[i].push_back(i + 15);
+                    }
+                    if(checkKnightMovement(i, {row - 2, col + 1}) &&
+                            this->validateMove(i, i - 15)){
+                        this->validMovements[i].push_back(i - 15);
+                    }
+                    if(checkKnightMovement(i, {row - 2, col - 1}) && 
+                            this->validateMove(i, i - 17)){
+                        this->validMovements[i].push_back(i - 17);
+                    }
+                    break;
+                }
+            case QUEEN:
+            case ROOK:
+                {
+                    for(int x = i + 1; x % 8 != 0; x++){
+                        if(checkRookMovement(i, x) &&
+                                this->validateMove(i, x)){
+                            this->validMovements[i].push_back(x);
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                    for(int x = i - 1; x % 8 != 7 && x >= 0; x--){
+                        if(checkRookMovement(i, x) &&
+                                this->validateMove(i, x)){
+                            this->validMovements[i].push_back(x);
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                    for(int x = i + 8; x < this->board.size(); x += 8){
+                        if(checkRookMovement(i, x) &&
+                                this->validateMove(i, x)){
+                            this->validMovements[i].push_back(x);
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                    for(int x = i - 8; x >= 0; x -= 8){
+                        if(checkRookMovement(i, x) &&
+                                this->validateMove(i, x)){
+                            this->validMovements[i].push_back(x);
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                    if(this->board[i] == ROOK){
+                        break;
+                    }
+                }
+            case BISHOP:
+                {
+                    for(int x = i + 9; x % 8 != 0 && x < 64; x += 9){
+                        if(checkBishopMovement(i, x) &&
+                                this->validateMove(i, x)){
+                            this->validMovements[i].push_back(x);
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                    for(int x = i + 7; (x - 7) % 8 != 0 && x < 64; x += 7){
+                        if(checkBishopMovement(i, x) &&
+                                this->validateMove(i, x)){
+                            this->validMovements[i].push_back(x);
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                    for(int x = i - 9; (x + 9) % 8 != 0 && x >= 0; x -= 9){
+                        if(checkBishopMovement(i, x) &&
+                                this->validateMove(i, x)){
+                            this->validMovements[i].push_back(x);
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                    for(int x = i - 7; x % 8 != 0 && x >= 0; x -= 7){
+                        if(checkBishopMovement(i, x) &&
+                                this->validateMove(i, x)){
+                            this->validMovements[i].push_back(x);
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                    break;
+                }
+            case KING:
+                {
+                    for(int r = -1; r <= 1; r++){
+                        for(int c = -1; c <= 1; c++){
+                            if(checkKingMovement(i, {row + r, col + c})
+                                    && this->validateMove(i, i+r*8+c)){
+                                this->validMovements[i].push_back(i+r*8+c);
+                            }
+                        }
+                    }
+                    break;
+                }
+        }
+        if(this->validMovements[i].size() == 0){
+            this->validMovements.erase(i);
+        }
+    }
+}
+
+bool ChessBoard::validateMove(int from, int to){
+    bool validMove = true;
+
+    char curr = this->board[from];
+    char target = this->board[to];
+    int wKingPos = this->whiteKingPos;
+    int bKingPos = this->blackKingPos;
+    if(this->board[from] == KING){
+        this->blackKingPos = to;
+    }
+    else if(this->board[from] == KING + 10){
+        this->whiteKingPos = to;
+    }
+    this->board[to] = curr;
+    this->board[from] = 0;
+    if(boardInCheck()){
+        validMove = false;
+    }
+    this->board[to] = target;
+    this->board[from] = curr;
+    this->blackKingPos = bKingPos;
+    this->whiteKingPos = wKingPos;
+    return validMove;
+}
+
 bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
     int curr = from.first * 8 + from.second;
     int target = to.first * 8 + to.second;
+
 
     if(curr < 0 || curr >= this->board.size()){
         return false;
@@ -31,15 +245,18 @@ bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
         return false;
     }
 
-    bool movingEnemyPiece = this->whiteTurn == (this->board[curr] < 10);
-    if(movingEnemyPiece){
+    this->findValidMovements();
+    if(this->validMovements.find(curr) == this->validMovements.end()){
         return false;
     }
-
-    bool movedPiece = this->movePiece(from, to);
-    if(!movedPiece){
+    bool moveNotValid = std::find(this->validMovements[curr].begin(), 
+            this->validMovements[curr].end(),
+            target) == this->validMovements[curr].end();
+    if(moveNotValid){
         return false;
     }
+    this->board[target] = this->board[curr];
+    this->board[curr] = 0;
 
     this->whiteTurn = !this->whiteTurn;
 
@@ -178,91 +395,6 @@ bool ChessBoard::boardInCheck(){
     }
 
     return false;
-}
-
-bool ChessBoard::movePiece(
-    std::pair<int, int> from, std::pair<int, int> to
-){
-    bool isValidMove = true;
-    if(from.first < 0 || from.second < 0 || 
-            to.first < 0 || to.second < 0 ||
-            from.first >= 8 || from.second >= 8 ||
-            to.first >= 8 || to.second >= 8){
-        return false;
-    }
-    int curr = from.first * 8 + from.second;
-    int target = to.first * 8 + to.second;
-    if(this->board[curr] == 0){
-        return false;
-    }
-    bool inPlaceMovement = 
-        from.first == to.first && from.second == to.second;
-    if(inPlaceMovement){
-        // UnSelect?
-        return false;
-    }
-    
-    int movingPiece = this->board[curr] % 10;
-    switch(movingPiece){
-        case PAWN:
-        {
-            isValidMove = checkPawnMovement(from, to);
-            if(! isValidMove){
-                return false;
-            }
-            break;
-         }
-        case ROOK:
-            isValidMove = checkRookMovement(from, to);
-            if(!isValidMove){
-                return false;
-            }
-            break;
-        case KNIGHT:
-            isValidMove = checkKnightMovement(from, to);
-            if(!isValidMove){
-                return false;
-            }
-            break;
-        case BISHOP:
-            isValidMove = checkBishopMovement(from, to);
-            if(!isValidMove){
-                return false;
-            }
-            break;
-        case QUEEN:
-            isValidMove = checkQueenMovement(from, to);
-            if(!isValidMove){
-                return false;
-            }
-            break;
-        case KING:
-            isValidMove = checkKingMovement(from, to);
-            if(!isValidMove){
-                return false;
-            }
-            break;
-    }
-    int bKingPos = this->blackKingPos;
-    int wKingPos = this->whiteKingPos;
-    if(this->board[curr] == KING){
-        this->blackKingPos = target;
-    }
-    else if(this->board[curr] == KING + 10){
-        this->whiteKingPos = target;
-    }
-    char targetChar = this->board[target];
-    char currChar = this->board[curr];
-    this->board[target] = currChar;
-    this->board[curr] = 0;
-    if(boardInCheck()){
-        this->board[target] = targetChar;
-        this->board[curr] = currChar;
-        this->whiteKingPos = wKingPos;
-        this->blackKingPos = bKingPos;
-        return false;
-    }
-    return isValidMove;
 }
 
 
@@ -597,6 +729,49 @@ bool ChessBoard::checkKingMovement(
         return false;
     }
     return true;
+}
+
+bool ChessBoard::checkPawnMovement(int from, std::pair<int, int> to){
+    if(to.first < 0 || to.second < 0 || 
+            to.first >= 8 || to.second >= 8){
+        return false;
+    }
+    return this->checkPawnMovement({from / 8, from % 8}, to);
+}
+bool ChessBoard::checkRookMovement(int from, std::pair<int, int> to){
+    if(to.first < 0 || to.second < 0 || 
+            to.first >= 8 || to.second >= 8){
+        return false;
+    }
+    return this->checkRookMovement({from / 8, from % 8}, to);
+}
+bool ChessBoard::checkKnightMovement(int from, std::pair<int, int> to){
+    if(to.first < 0 || to.second < 0 || 
+            to.first >= 8 || to.second >= 8){
+        return false;
+    }
+    return this->checkKnightMovement({from/8, from%8}, to);
+}
+bool ChessBoard::checkBishopMovement(int from, std::pair<int, int> to){
+    if(to.first < 0 || to.second < 0 || 
+            to.first >= 8 || to.second >= 8){
+        return false;
+    }
+    return this->checkBishopMovement({from/8, from%8}, to);
+}
+bool ChessBoard::checkQueenMovement(int from, std::pair<int, int> to){
+    if(to.first < 0 || to.second < 0 || 
+            to.first >= 8 || to.second >= 8){
+        return false;
+    }
+    return this->checkQueenMovement({from/8, from%8}, to);
+}
+bool ChessBoard::checkKingMovement(int from, std::pair<int, int> to){
+    if(to.first < 0 || to.second < 0 || 
+            to.first >= 8 || to.second >= 8){
+        return false;
+    }
+    return this->checkKingMovement({from/8, from%8}, to);
 }
 
 bool ChessBoard::checkPawnMovement(int from, int to){
