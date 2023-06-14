@@ -28,6 +28,7 @@ public:
     bool move(std::pair<int, int> from, std::pair<int, int> to);
 
     bool boardInCheck();
+    bool gameIsRunning();
     bool compare(ChessBoard board2);
 
     void printBoard();
@@ -35,13 +36,16 @@ public:
 
     ChessBoard& operator=(ChessBoard board);
     void setBoard(std::vector<char> target, bool turn = true);
+    
 
 private:
     std::vector<char> board;
     bool whiteTurn;
+    bool gameRunning;
     int whiteKingPos, blackKingPos;
     std::map<int, std::vector<int>> validMovements;
 
+    void switchTurn();
     void findValidMovements();
     bool validateMove(int from, int to);
 

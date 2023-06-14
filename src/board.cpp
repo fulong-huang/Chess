@@ -18,6 +18,7 @@ ChessBoard::ChessBoard(){
     }
     this->whiteKingPos = 60;
     this->blackKingPos = 4;
+    this->findValidMovements();
 }
 
 void ChessBoard::findValidMovements(){
@@ -206,6 +207,10 @@ void ChessBoard::findValidMovements(){
             this->validMovements.erase(i);
         }
     }
+    if(this->validMovements.size() == 0){
+        std::cout << "Checkmate!!!" << std::endl;
+        this->gameRunning = false;
+    }
 }
 
 bool ChessBoard::validateMove(int from, int to){
@@ -234,6 +239,9 @@ bool ChessBoard::validateMove(int from, int to){
 }
 
 bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
+    if(!this->gameRunning){
+        std::cout << "Game already ended!!!" << std::endl;
+    }
     int curr = from.first * 8 + from.second;
     int target = to.first * 8 + to.second;
 
@@ -258,7 +266,7 @@ bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
     this->board[target] = this->board[curr];
     this->board[curr] = 0;
 
-    this->whiteTurn = !this->whiteTurn;
+    this->switchTurn();
 
     return true;
 }
@@ -397,6 +405,18 @@ bool ChessBoard::boardInCheck(){
     return false;
 }
 
+void ChessBoard::switchTurn(){
+    if(!this->gameRunning){
+        std::cout << "Game already ended!!!" << std::endl;
+        return;
+    }
+    this->whiteTurn = !this->whiteTurn;
+    this->findValidMovements();
+}
+
+bool ChessBoard::gameIsRunning(){
+    return this->gameRunning;
+}
 
 bool ChessBoard::compare(ChessBoard board2){
     std::vector<char> secondBoard = board2.getBoard();
@@ -498,7 +518,6 @@ bool ChessBoard::checkPawnMovement(
     }
     return true;
 }
-
 
 bool ChessBoard::checkRookMovement(
         std::pair<int, int> from, std::pair<int, int> to
@@ -833,6 +852,7 @@ void ChessBoard::setBoard(std::vector<char> newBoard, bool turn){
     }
     this->whiteTurn = turn;
     this->board = newBoard;
+    this->findValidMovements();
 }
 
 ChessBoard& ChessBoard::operator=(ChessBoard board){
@@ -840,6 +860,6 @@ ChessBoard& ChessBoard::operator=(ChessBoard board){
     this->board = board.board;
     this->whiteKingPos = board.whiteKingPos;
     this->blackKingPos = board.blackKingPos;
+    this->findValidMovements();
     return *this;
 }
-
