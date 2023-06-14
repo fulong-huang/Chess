@@ -19,6 +19,7 @@ ChessBoard::ChessBoard(){
     this->whiteKingPos = 60;
     this->blackKingPos = 4;
     this->findValidMovements();
+    this->gameRunning = true;
 }
 
 void ChessBoard::findValidMovements(){
@@ -852,6 +853,7 @@ void ChessBoard::setBoard(std::vector<char> newBoard, bool turn){
     }
     this->whiteTurn = turn;
     this->board = newBoard;
+    this->gameRunning = true;
     this->findValidMovements();
 }
 
@@ -860,6 +862,7 @@ ChessBoard& ChessBoard::operator=(ChessBoard board){
     this->board = board.board;
     this->whiteKingPos = board.whiteKingPos;
     this->blackKingPos = board.blackKingPos;
+    this->gameRunning = board.gameRunning;
     this->findValidMovements();
     return *this;
 }
