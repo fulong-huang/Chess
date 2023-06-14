@@ -266,6 +266,30 @@ bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
     if(moveNotValid){
         return false;
     }
+    
+    if(this->board[curr] % 10 == PAWN){
+        if(std::abs(curr - target) == 16){
+            if(this->whiteTurn){
+                this->whitePassant = target;
+            }
+            else{
+                this->blackPassant = target;
+            }
+        }
+        else{
+            if(this->whiteTurn){
+                if(target + 8 == this->blackPassant){
+                    this->board[this->blackPassant] = 0;
+                }
+            }
+            else{
+                if(target - 8 == this->whitePassant){
+                    this->board[this->whitePassant] = 0;
+                }
+            }
+        }
+    }
+
     this->board[target] = this->board[curr];
     this->board[curr] = 0;
 
@@ -422,6 +446,12 @@ void ChessBoard::switchTurn(){
         return;
     }
     this->whiteTurn = !this->whiteTurn;
+    if(this->whiteTurn){
+        this->whitePassant = -64;
+    }
+    else{
+        this->blackPassant = -64;
+    }
     this->findValidMovements();
 }
 
@@ -499,9 +529,30 @@ bool ChessBoard::checkPawnMovement(
                 return this->board[target] == 0;
             }
             if(colDiff == 1){
+                if(this->whiteTurn){
+                    if(from.first == 3){
+                        if(this->blackPassant == target + 8){
+                            return true;
+                        }
+                    }
+                }
+                else{
+                    if(from.first == 4){
+                        if(this->whitePassant == target - 8){
+                            return true;
+                        }
+                    }
+                }
                 bool enemyTarget = 
                     this->whiteTurn == (this->board[target] < 10);
                 if(!enemyTarget || this->board[target] == 0){
+                    if(this->whiteTurn){
+                        if(from.first == 3 &&
+                                (this->blackPassant == curr - 1 || 
+                                 this->blackPassant == curr + 1)){
+
+                        }
+                    }
                     return false;
                 }
             }
