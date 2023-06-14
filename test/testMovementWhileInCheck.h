@@ -8,6 +8,7 @@ void testMovementWhileInCheck();
 Test testIfDetectCheck();
 Test testIfCheckLimitsMovement();
 Test testIfDetectCheckmate();
-
+Test testDiscoverCheck();
+Test testInvalidMovementLeadToCheck();
 
 

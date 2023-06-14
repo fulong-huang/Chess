@@ -5,6 +5,8 @@ void testMovementWhileInCheck(){
     testLists.push_back(testIfDetectCheck());
     testLists.push_back(testIfCheckLimitsMovement());
     testLists.push_back(testIfDetectCheckmate());
+    testLists.push_back(testInvalidMovementLeadToCheck());
+    testLists.push_back(testDiscoverCheck());
     Test::printTestSuit(testLists);
 }
 
@@ -106,19 +108,19 @@ Test testIfDetectCheck(){
             });
     test.compare(board.boardInCheck(), false,
             "Detect False Checked By Rook");
-//    board.setBoard({
-//    //   0    1    2    3    4    5    6    7
-//        '-', '-', '-', 'K', '-', '-', '-', '-',  // 0
-//        '-', '-', '-', '-', '-', '-', '-', '-',  // 1
-//        '-', '-', '-', '-', '-', '-', '-', '-',  // 2
-//        '-', '-', '-', '-', '-', 'k', '-', '-',  // 3
-//        '-', '-', '-', '-', '-', '-', '-', 'a',  // 4
-//        '-', '-', '-', '-', 'N', '-', '-', '-',  // 5
-//        '-', '-', '-', '-', '-', '-', '-', '-',  // 6
-//        '-', '-', '-', '-', '-', '-', '-', 'r',  // 7
-//            });
-//    test.compare(board.boardInCheck(), true,
-//            "Detect Checked By Knight");
+    board.setBoard({
+    //   0    1    2    3    4    5    6    7
+        '-', '-', '-', 'K', '-', '-', '-', '-',  // 0
+        '-', '-', '-', '-', '-', '-', '-', '-',  // 1
+        '-', '-', '-', '-', '-', '-', '-', '-',  // 2
+        '-', '-', '-', '-', '-', 'k', '-', '-',  // 3
+        '-', '-', '-', '-', '-', '-', '-', 'a',  // 4
+        '-', '-', '-', '-', 'N', '-', '-', '-',  // 5
+        '-', '-', '-', '-', '-', '-', '-', '-',  // 6
+        '-', '-', '-', '-', '-', '-', '-', 'r',  // 7
+            });
+    test.compare(board.boardInCheck(), true,
+            "Detect Checked By Knight");
     board.setBoard({
     //   0    1    2    3    4    5    6    7
         '-', '-', 'B', 'K', '-', '-', '-', '-',  // 0
@@ -377,6 +379,59 @@ Test testIfDetectCheckmate(){
     return test;
 }
 
+Test testInvalidMovementLeadToCheck(){
+    Test test("Test Invalid Movement Lead To Check");
+    ChessBoard board;
+    board.setBoard({
+    //   0    1    2    3    4    5    6    7
+        '-', '-', '-', '-', '-', 'R', 'K', '-',  // 0
+        '-', '-', '-', '-', '-', '-', '-', '-',  // 1
+        '-', '-', '-', '-', '-', '-', '-', '-',  // 2
+        '-', '-', '-', '-', '-', '-', '-', '-',  // 3
+        '-', '-', '-', '-', '-', '-', '-', '-',  // 4
+        '-', '-', '-', '-', '-', '-', '-', '-',  // 5
+        '-', '-', '-', '-', '-', 'n', '-', '-',  // 6
+        '-', '-', '-', '-', '-', 'k', '-', '-',  // 7
+            });
+    test.compare(board.move({6, 5}, {5, 7}), false,
+            "Expose King By Moving Knight");
+    return test;
+}
+
+Test testDiscoverCheck(){
+    Test test("Test Discover Checks");
+    ChessBoard board;
+    board.setBoard({
+    //   0    1    2    3    4    5    6    7
+        '-', '-', '-', 'K', 'R', '-', '-', '-',  // 0
+        '-', '-', '-', '-', '-', '-', '-', '-',  // 1
+        '-', '-', '-', '-', '-', '-', '-', '-',  // 2
+        '-', '-', '-', '-', '-', '-', '-', '-',  // 3
+        '-', '-', '-', '-', '-', '-', '-', '-',  // 4
+        '-', '-', '-', 'n', '-', '-', '-', '-',  // 5
+        '-', '-', '-', 'r', '-', '-', '-', '-',  // 6
+        '-', '-', '-', 'k', '-', '-', '-', '-',  // 7
+            });
+    test.compare(board.move({5, 3}, {4, 5}), true,
+            "Discover Check With Knight");
+    test.compare(board.move({0, 4}, {7, 4}), false,
+            "Ignore Discover Check And Move Rook");
+    test.compare(board.move({0, 3}, {1, 4}), true,
+            "Escape Discover Check");
+//    board.setBoard({
+//    //   0    1    2    3    4    5    6    7
+//        '-', '-', '-', '-', '-', '-', '-', '-',  // 0
+//        '-', '-', '-', '-', '-', '-', '-', '-',  // 1
+//        '-', '-', '-', '-', '-', '-', '-', '-',  // 2
+//        '-', '-', '-', '-', '-', '-', '-', '-',  // 3
+//        '-', '-', '-', '-', '-', '-', '-', '-',  // 4
+//        '-', '-', '-', '-', '-', '-', '-', '-',  // 5
+//        '-', '-', '-', '-', '-', '-', '-', '-',  // 6
+//        '-', '-', '-', '-', '-', '-', '-', '-',  // 7
+//            });
+    
+    return test;
+}
 
 
 
