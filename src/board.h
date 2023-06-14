@@ -45,6 +45,8 @@ private:
     int whiteKingPos, blackKingPos;
     std::map<int, std::vector<int>> validMovements;
     int whitePassant, blackPassant;
+    int whiteKingSideCastle, whiteQueenSideCastle;
+    int blackKingSideCastle, blackQueenSideCastle;
 
     void switchTurn();
     void findValidMovements();

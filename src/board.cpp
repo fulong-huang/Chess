@@ -22,6 +22,10 @@ ChessBoard::ChessBoard(){
     this->gameRunning = true;
     this->whitePassant = -64;
     this->blackPassant = -64;
+    this->blackQueenSideCastle = true;
+    this->whiteQueenSideCastle = true;
+    this->blackKingSideCastle = true;
+    this->whiteKingSideCastle = true;
 }
 
 void ChessBoard::findValidMovements(){
@@ -203,6 +207,12 @@ void ChessBoard::findValidMovements(){
                             }
                         }
                     }
+                    if(checkKingMovement(i, i + 2)){
+                        this->validMovements[i].push_back(i + 2);
+                    }
+                    if(checkKingMovement(i, i - 2)){
+                        this->validMovements[i].push_back(i - 2);
+                    }
                     break;
                 }
         }
@@ -287,6 +297,47 @@ bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
                     this->board[this->whitePassant] = 0;
                 }
             }
+        }
+    }
+    if(curr == 0 || target == 0){
+        this->blackQueenSideCastle = false;
+    }
+    else if(curr == 7 || target == 7){
+        this->blackKingSideCastle = false;
+    }
+    else if(curr == 63 || target == 63){
+        this->whiteKingSideCastle = false;
+    }
+    else if(curr == 56 || target == 56){
+        this->whiteQueenSideCastle = false;
+    }
+
+    if(this->board[curr] % 10 == KING){
+        if(this->whiteTurn){
+            this->whiteKingSideCastle = false;
+            this->whiteQueenSideCastle = false;
+            if(curr - target == 2){
+                this->board[59] = ROOK + 10;
+                this->board[56] = 0;
+            }
+            else if(target - curr == 2){
+                this->board[61] = ROOK + 10;
+                this->board[63] = 0;
+            }
+            this->whiteKingPos = target;
+        }
+        else{
+            this->blackKingSideCastle = false;
+            this->blackQueenSideCastle = false;
+            if(curr - target == 2){
+                this->board[3] = ROOK;
+                this->board[0] = 0;
+            }
+            else if(target - curr == 2){
+                this->board[5] = ROOK;
+                this->board[7] = 0;
+            }
+            this->blackKingPos = target;
         }
     }
 
@@ -448,8 +499,10 @@ void ChessBoard::switchTurn(){
     this->whiteTurn = !this->whiteTurn;
     if(this->whiteTurn){
         this->whitePassant = -64;
+        std::cout << "White's Turn Now: " << std::endl;
     }
     else{
+        std::cout << "Black's Turn Now: " << std::endl;
         this->blackPassant = -64;
     }
     this->findValidMovements();
@@ -797,7 +850,76 @@ bool ChessBoard::checkKingMovement(
     int rowDiff = std::abs(from.first - to.first);
     int colDiff = std::abs(from.second - to.second);
 
-    if(rowDiff > 1 || colDiff > 1){
+    if(rowDiff > 1){
+        return false;
+    }
+    if(rowDiff == 0 && colDiff == 2){
+        if(from.second > to.second){
+                std::cout << "WHITE TURN: " << this->whiteTurn << std::endl;
+            if(this->whiteTurn){
+                if(this->whiteQueenSideCastle){
+                    if(
+                            this->board[59] != 0 ||
+                            this->board[58] != 0 ||
+                            this->board[57] != 0){
+                        std::cout << "PATH BLOCKED" << std::endl;
+                        return false;
+                    }
+                    std::cout << "PATH NOT BLOCKED" << std::endl;
+                    if(boardInCheck()) return false;
+                    std::cout << " 2 PATH NOT BLOCKED" << std::endl;
+                    if(!validateMove(60, 59)) return false;
+                    std::cout << " 3 PATH NOT BLOCKED" << std::endl;
+                    if(!validateMove(60, 58)) return false;
+                    std::cout << " 4 PATH NOT BLOCKED" << std::endl;
+                    return true;
+                }
+            }
+            else{
+                if(this->blackQueenSideCastle){
+                    if(
+                            this->board[3] != 0 ||
+                            this->board[2] != 0 ||
+                            this->board[1] != 0){
+                        return false;
+                    }
+                    if(boardInCheck()) return false;
+                    if(!validateMove(4, 3)) return false;
+                    if(!validateMove(4, 2)) return false;
+                    return true;
+                }
+            }
+        }
+        else{
+            if(this->whiteTurn){
+                if(this->whiteKingSideCastle){
+                    if(
+                            this->board[61] != 0 ||
+                            this->board[62] != 0){
+                        return false;
+                    }
+                    if(boardInCheck()) return false;
+                    if(!validateMove(60, 61)) return false;
+                    if(!validateMove(60, 62)) return false;
+                    return true;
+                }
+            }
+            else{
+                if(this->blackQueenSideCastle){
+                    if(
+                            this->board[5] != 0 ||
+                            this->board[6] != 0){
+                        return false;
+                    }
+                    if(boardInCheck()) return false;
+                    if(!validateMove(4, 5)) return false;
+                    if(!validateMove(4, 6)) return false;
+                    return true;
+                }
+            }
+        }
+    }
+    if(colDiff > 1){
         return false;
     }
 
@@ -914,12 +1036,26 @@ void ChessBoard::setBoard(std::vector<char> newBoard, bool turn){
         }
         newBoard[i] = piece;
     }
+
     this->whiteTurn = turn;
     this->board = newBoard;
     this->gameRunning = true;
     this->findValidMovements();
     this->whitePassant = -64;
     this->blackPassant = -64;
+
+    this->blackQueenSideCastle = this->board[0] == ROOK;
+    this->whiteQueenSideCastle = this->board[7] == ROOK;
+    this->blackKingSideCastle = this->board[56] == ROOK + 10;
+    this->whiteKingSideCastle = this->board[63] == ROOK + 10;
+    if(this->board[4] != KING){
+        this->blackQueenSideCastle = false;
+        this->blackKingSideCastle = false;
+    }
+    if(this->board[60] != KING + 10){
+        this->whiteKingSideCastle = false;
+        this->whiteQueenSideCastle = false;
+    }
 }
 
 ChessBoard& ChessBoard::operator=(ChessBoard board){
@@ -931,5 +1067,9 @@ ChessBoard& ChessBoard::operator=(ChessBoard board){
     this->findValidMovements();
     this->whitePassant = board.whitePassant;
     this->blackPassant = board.blackPassant;
+    this->blackQueenSideCastle = board.blackQueenSideCastle;
+    this->whiteQueenSideCastle = board.whiteQueenSideCastle;
+    this->blackKingSideCastle = board.blackKingSideCastle;
+    this->whiteKingSideCastle = board.whiteKingSideCastle;
     return *this;
 }

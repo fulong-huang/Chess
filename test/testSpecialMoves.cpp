@@ -145,17 +145,21 @@ Test testCastle(){
         '-', '-', '-', '-', '-', '-', '-', '-',  // 2
         '-', '-', '-', '-', '-', '-', '-', '-',  // 3
         '-', '-', '-', '-', '-', '-', '-', '-',  // 4
-        '-', '-', '-', '-', 'r', '-', '-', '-',  // 5
+        '-', '-', '-', '-', '-', 'r', '-', '-',  // 5
         '-', '-', '-', '-', 'a', 'a', 'a', 'a',  // 6
         'r', '-', '-', '-', 'k', '-', '-', '-',  // 7
             });
     board = stage;
     test.compare(board.move({7, 4}, {7, 2}), false,
             "Castle Into Check");
-    board.move({6, 7}, {5, 7});
+    board.move({5, 5}, {5, 4});
     test.compare(board.move({0, 4}, {0, 6}), false,
             "Castle From Check");
-    board.move({0, 2}, {0, 0});
+    board.move({0, 4}, {0, 3});
+    test.compare(board.move({6, 7}, {5, 7}), true,
+            "Move Pawn Forward (W)");
+    test.compare(board.move({0, 2}, {0, 0}), true,
+            "Move Rook Away (B)");
     test.compare(board.move({7, 4}, {7, 2}), true,
             "Castle After Path Not Targeted");
 
