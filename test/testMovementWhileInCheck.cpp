@@ -359,6 +359,19 @@ Test testIfDetectCheckmate(){
             });
     test.compare(board.gameIsRunning(), false,
             "Checkmated By Queens");
+    board.setBoard({
+    //   0    1    2    3    4    5    6    7
+        '-', '-', '-', '-', '-', '-', '-', '-',  // 0
+        '-', '-', '-', '-', '-', '-', '-', '-',  // 1
+        '-', '-', '-', '-', '-', '-', '-', '-',  // 2
+        '-', '-', '-', '-', '-', '-', '-', '-',  // 3
+        '-', '-', '-', '-', '-', '-', '-', '-',  // 4
+        '-', '-', '-', 'K', '-', '-', '-', '-',  // 5
+        '-', '-', '-', '-', '-', '-', '-', '-',  // 6
+        '-', 'R', '-', 'k', '-', '-', '-', '-',  // 7
+            });
+    test.compare(board.gameIsRunning(), false,
+            "Checkmated With King's Assist");
 
     test.printResult();
     return test;

@@ -294,11 +294,13 @@ bool ChessBoard::boardInCheck(){
     int knight = KNIGHT;
     int bishop = BISHOP;
     int queen = QUEEN;
+    int king = KING;
     if(!this->whiteTurn){
         rook += 10;
         knight += 10;
         bishop += 10;
         queen += 10;
+        king += 10;
         checkedByPawn = 
             pieceAtPosition(PAWN + 10, {x + 1, y + 1}) ||
             pieceAtPosition(PAWN + 10, {x + 1, y - 1});
@@ -308,8 +310,14 @@ bool ChessBoard::boardInCheck(){
             pieceAtPosition(PAWN, {x - 1, y + 1}) ||
             pieceAtPosition(PAWN, {x - 1, y - 1});
     }
-
     if(checkedByPawn) return true;
+    for(int i = -1; i <= 1; i++){
+        for(int j = -1; j <= 1; j++){
+            if(pieceAtPosition(king, {x + i, y + j})){
+                return true;
+            }
+        }
+    }
     bool checkedByKnight =
         pieceAtPosition(knight, {x + 2, y + 1}) ||
         pieceAtPosition(knight, {x + 2, y - 1}) ||
