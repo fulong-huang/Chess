@@ -7,7 +7,7 @@ void testMovementWhileInCheck(){
     testLists.push_back(testIfDetectCheckmate());
     testLists.push_back(testInvalidMovementLeadToCheck());
     testLists.push_back(testDiscoverCheck());
-    Test::printTestSuit(testLists);
+    Test::printTestSuit(testLists, "Test Movement While In Check");
 }
 
 Test testIfDetectCheck(){
@@ -81,7 +81,6 @@ Test testIfDetectCheck(){
     test.compare(board.boardInCheck(), true,
             "Detect Checked By Queen");
 
-    std::cout << "\t\tCheck If not false Detection" << std::endl;
     board.setBoard({
     //   0    1    2    3    4    5    6    7
         '-', '-', '-', 'K', '-', '-', '-', '-',  // 0
@@ -148,7 +147,6 @@ Test testIfDetectCheck(){
     test.compare(board.boardInCheck(), false,
             "Detect False Checked By Queen");
 
-    test.printResult();
     return test;
 }
 
@@ -222,7 +220,6 @@ Test testIfCheckLimitsMovement(){
     test.compare(board.move({4, 7}, {3, 7}), false,
             "Not escaping check by Queen");
 
-    std::cout << "\t\tCheck Valid Excape" << std::endl;
     board.setBoard({
     //   0    1    2    3    4    5    6    7
         '-', '-', '-', 'K', '-', '-', '-', '-',  // 0
@@ -289,7 +286,6 @@ Test testIfCheckLimitsMovement(){
     test.compare(board.move({3, 5}, {2, 5}), true,
             "Escaping check by Queen");
 
-    test.printResult();
     return test;
 }
 
@@ -375,7 +371,6 @@ Test testIfDetectCheckmate(){
     test.compare(board.gameIsRunning(), false,
             "Checkmated With King's Assist");
 
-    test.printResult();
     return test;
 }
 

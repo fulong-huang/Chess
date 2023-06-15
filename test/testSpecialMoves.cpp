@@ -4,7 +4,7 @@ void testSpecialMoves(){
     std::vector<Test> testLists;
     testLists.push_back(testEnPassant());
     testLists.push_back(testCastle());
-    Test::printTestSuit(testLists);
+    Test::printTestSuit(testLists, "Test Special Moves");
 }
 
 Test testEnPassant(){

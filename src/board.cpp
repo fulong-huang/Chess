@@ -221,7 +221,6 @@ void ChessBoard::findValidMovements(){
         }
     }
     if(this->validMovements.size() == 0){
-        std::cout << "Checkmate!!!" << std::endl;
         this->gameRunning = false;
     }
 }
@@ -499,10 +498,8 @@ void ChessBoard::switchTurn(){
     this->whiteTurn = !this->whiteTurn;
     if(this->whiteTurn){
         this->whitePassant = -64;
-        std::cout << "White's Turn Now: " << std::endl;
     }
     else{
-        std::cout << "Black's Turn Now: " << std::endl;
         this->blackPassant = -64;
     }
     this->findValidMovements();
@@ -855,23 +852,17 @@ bool ChessBoard::checkKingMovement(
     }
     if(rowDiff == 0 && colDiff == 2){
         if(from.second > to.second){
-                std::cout << "WHITE TURN: " << this->whiteTurn << std::endl;
             if(this->whiteTurn){
                 if(this->whiteQueenSideCastle){
                     if(
                             this->board[59] != 0 ||
                             this->board[58] != 0 ||
                             this->board[57] != 0){
-                        std::cout << "PATH BLOCKED" << std::endl;
                         return false;
                     }
-                    std::cout << "PATH NOT BLOCKED" << std::endl;
                     if(boardInCheck()) return false;
-                    std::cout << " 2 PATH NOT BLOCKED" << std::endl;
                     if(!validateMove(60, 59)) return false;
-                    std::cout << " 3 PATH NOT BLOCKED" << std::endl;
                     if(!validateMove(60, 58)) return false;
-                    std::cout << " 4 PATH NOT BLOCKED" << std::endl;
                     return true;
                 }
             }
@@ -1073,3 +1064,5 @@ ChessBoard& ChessBoard::operator=(ChessBoard board){
     this->whiteKingSideCastle = board.whiteKingSideCastle;
     return *this;
 }
+
+

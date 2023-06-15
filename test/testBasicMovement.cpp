@@ -8,7 +8,7 @@ void testBasicMovements(){
     testList.push_back(testBasicBishopMovement());
     testList.push_back(testBasicQueenMovement());
     testList.push_back(testBasicKingMovement());
-    Test::printTestSuit(testList);
+    Test::printTestSuit(testList, "Test Basic Movements");
 }
 
 Test testBasicPawnMovement(){
@@ -59,7 +59,6 @@ Test testBasicPawnMovement(){
                 "Pawn 8"
             );
 
-    test.printResult();
     return test;
 }
 
@@ -85,7 +84,6 @@ Test testBasicKnightMovement(){
             true,
             "Move Knight out (W)"
             );
-    std::cout << "\t\tInvalid Black Movement" << std::endl;
     board = stage;
     test.compare(
             board.move({0, 1}, {2, 3}),
@@ -114,7 +112,6 @@ Test testBasicKnightMovement(){
                 "Check state of board"
             );
 
-    std::cout << "\t\tValid Movements" << std::endl;
     test.compare(
             board.move({0, 1}, {2, 2}),
             true,
@@ -142,7 +139,6 @@ Test testBasicKnightMovement(){
             "Capture Pawn (B) [Check Mate]"
             );
     
-    test.printResult();
     return test;
 }
 
@@ -184,7 +180,6 @@ Test testBasicBishopMovement(){
                 "Check state of board (Pawns out)"
             );
 
-    std::cout << "\t\tInvalid Black Movement" << std::endl;
     board = stage;
     test.compare(
             board.move({0, 5}, {2, 7}),
@@ -214,7 +209,6 @@ Test testBasicBishopMovement(){
                 "Check state of board"
             );
 
-    std::cout << "\t\tValid Movements" << std::endl;
     test.compare(
             board.move({0, 5}, {5, 0}),
             true,
@@ -256,7 +250,6 @@ Test testBasicBishopMovement(){
                 },
                 "Check state of board"
             );
-    test.printResult();
     return test;
 }
 
@@ -309,7 +302,6 @@ Test testBasicQueenMovement(){
                 "Check state of board (Pawns out)"
             );
 
-    std::cout << "\t\tInvalid Black Movement" << std::endl;
     board = stage;
     test.compare(
             board.move({0, 3}, {2, 1}),
@@ -339,7 +331,6 @@ Test testBasicQueenMovement(){
                 "Check state of board"
             );
 
-    std::cout << "\t\tValid Movements" << std::endl;
     test.compare(
             board.move({0, 3}, {4, 7}),
             true,
@@ -381,7 +372,6 @@ Test testBasicQueenMovement(){
                 },
                 "Check state of board"
             );
-    test.printResult();
     return test;
 }
 
@@ -428,7 +418,6 @@ Test testBasicKingMovement(){
                 "Check state of board (Pawns out)"
             );
 
-    std::cout << "\t\tInvalid Black Movement" << std::endl;
     board = stage;
     test.compare(
             board.move({0, 4}, {1, 3}),
@@ -458,7 +447,6 @@ Test testBasicKingMovement(){
                 "Check state of board"
             );
 
-    std::cout << "\t\tValid Movements" << std::endl;
     test.compare(
             board.move({0, 4}, {1, 4}),
             true,
@@ -490,7 +478,6 @@ Test testBasicKingMovement(){
                 },
                 "Check state of board"
             );
-    test.printResult();
     return test;
 }
 
@@ -625,7 +612,6 @@ Test testBasicRookMovement(){
                 false,
                 "Take (B) Piece by Skip over Enemy pieces"
             );
-    test.printResult();
     return test;
 }
 

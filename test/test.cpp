@@ -1,15 +1,17 @@
 #include "test.h"
 
-Test::Test(std::string message){
+Test::Test(std::string message, bool mute){
     this->totalTest = 0;
     this->passedTest = 0;
     this->msg = message;
+    this->mute = mute;
     int paddingLen = 92 - message.size();
     std::string padding = "";
     for(int i = 0; i < paddingLen; i += 2){
         padding += '=';
     }
     std::string title = padding + message + padding;
+    if(mute) return;
     std::cout << "\n" << title << "\n";
 }
 
@@ -37,7 +39,8 @@ void Test::compare(std::vector<char> a, std::vector<char> b, std::string msg){
             return;
         }
     }
-    printCompareResult(msg, true);
+    if(!this->mute)
+        printCompareResult(msg, true);
     this->passedTest++;
 }
 
@@ -65,6 +68,7 @@ void Test::printCompareResult(std::string msg, bool passed){
 
     if(passed){
         outString += "   PASSED   ";
+        if(this->mute) return;
     }
     else{
         outString += "===FAILED===";
@@ -79,21 +83,27 @@ int Test::getPassedTestCount(){
     return this->passedTest;
 }
 
-void Test::printTestSuit(std::vector<Test> testSuit){
+void Test::printTestSuit(std::vector<Test> testSuit, std::string title){
     std::string currMsg = "\n\n";
-    for(int i = 0; i < 89; i++){
+    int lineLen = 90;
+    if(title.size() % 2 == 1){
+        lineLen = 91;
+    }
+    for(int i = 0; i < lineLen; i++){
         currMsg += '=';
     }
     currMsg += '\n';
-    for(int i = 0; i < 40; i++){
+    int n = 89 - title.size();
+    n /= 2;
+    for(int i = 0; i < n; i++){
         currMsg += '=';
     }
-    currMsg += " SUMMARY ";
-    for(int i = 0; i < 40; i++){
+    currMsg += " " + title + " ";
+    for(int i = 0; i < n; i++){
         currMsg += '=';
     }
     currMsg += '\n';
-    for(int i = 0; i < 89; i++){
+    for(int i = 0; i < lineLen; i++){
         currMsg += '=';
     }
     std::cout << currMsg << "\n" << std::endl;

@@ -48,6 +48,8 @@ _deps
 
 out/build
 
+.cache/
+
 [Bb][Uu][Ii][Ll][Dd]/
 
 Session.vim

@@ -1,16 +1,26 @@
 #include <cstdlib>
 #include <iostream>
-#include "test/testBasicMovement.h"
-#include "test/testMovementWhileInCheck.h"
-#include "test/testSpecialMoves.h"
+#include <SFML/Graphics.hpp>
 
 int main(int argc, char* argv[]){
 
-    testBasicMovements();
+    sf::RenderWindow window(sf::VideoMode(400, 400), "SFML works!");
+    sf::CircleShape shape(200.f);
+    shape.setFillColor(sf::Color::Green);
 
-    testMovementWhileInCheck();
+    while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
 
-    testSpecialMoves();
+        window.clear();
+        window.draw(shape);
+        window.display();
+    }
 
     return EXIT_SUCCESS;
 }
