@@ -4,24 +4,10 @@
 #include <vector>
 #include <utility>
 #include <stdlib.h>
+#include "pieces.h"
 
 
 class ChessBoard{
-
-    const char pieceName[7] = {
-        '-', 'A', 'R', 'N', 'B', 'Q', 'K',
-    };
-    
-    enum Pieces{
-        EMPTY = 0,
-        PAWN = 1,
-        ROOK = 2,
-        KNIGHT = 3,
-        BISHOP = 4,
-        QUEEN = 5, 
-        KING = 6,
-    };
-
 public: 
     ChessBoard();
     
@@ -33,6 +19,7 @@ public:
 
     void printBoard();
     std::vector<char> getBoard();
+    std::vector<char> getGameBoard();
 
     ChessBoard& operator=(ChessBoard board);
     void setBoard(std::vector<char> target, bool turn = true);

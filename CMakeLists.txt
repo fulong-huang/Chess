@@ -11,6 +11,7 @@ include_directories(external test src)
 add_executable(${PROJECT_NAME} 
     main.cpp
     src/board.cpp
+    src/game.cpp
     test/test.cpp
     test/testBasicMovement.cpp
     test/testMovementWhileInCheck.cpp

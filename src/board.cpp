@@ -539,6 +539,10 @@ void ChessBoard::printBoard(){
     std::cout << board << std::endl;
 }
 
+std::vector<char> ChessBoard::getGameBoard(){
+    return this->board;
+}
+
 std::vector<char> ChessBoard::getBoard(){
     std::vector<char> copy;
     for(int i = 0; i < this->board.size(); i++){
