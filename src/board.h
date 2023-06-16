@@ -10,8 +10,11 @@
 class ChessBoard{
 public: 
     ChessBoard();
+    void resetBoard();
     
-    bool move(std::pair<int, int> from, std::pair<int, int> to);
+    bool move(
+        std::pair<int, int> from, std::pair<int, int> to, char promote = QUEEN
+    );
 
     bool boardInCheck();
     bool gameIsRunning();

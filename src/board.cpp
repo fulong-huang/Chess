@@ -28,6 +28,35 @@ ChessBoard::ChessBoard(){
     this->whiteKingSideCastle = true;
 }
 
+void ChessBoard::resetBoard(){
+    this->whiteTurn = true;
+    this->board = {
+    //   0      1       2       3       4       5       6       7
+        ROOK,   KNIGHT, BISHOP, QUEEN,  KING,   BISHOP, KNIGHT, ROOK,   // 0
+        PAWN,   PAWN,   PAWN,   PAWN,   PAWN,   PAWN,   PAWN,   PAWN,   // 1
+        EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  // 2
+        EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  // 3
+        EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  // 4
+        EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  // 5
+        PAWN,   PAWN,   PAWN,   PAWN,   PAWN,   PAWN,   PAWN,   PAWN,   // 6
+        ROOK,   KNIGHT, BISHOP, QUEEN,  KING,   BISHOP, KNIGHT, ROOK,   // 7
+    };
+    for(int i = 48; i < this->board.size(); i++){
+        this->board[i] += 10;
+    }
+    this->whiteKingPos = 60;
+    this->blackKingPos = 4;
+    this->gameRunning = true;
+    this->findValidMovements();
+    this->whitePassant = -64;
+    this->blackPassant = -64;
+    this->blackQueenSideCastle = true;
+    this->whiteQueenSideCastle = true;
+    this->blackKingSideCastle = true;
+    this->whiteKingSideCastle = true;
+}
+
+
 std::vector<int> ChessBoard::getValidMovements(int row, int col){
     int from = row * 8 + col;
     if(this->validMovements.find(from) == this->validMovements.end()){
@@ -257,7 +286,9 @@ bool ChessBoard::validateMove(int from, int to){
     return validMove;
 }
 
-bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
+bool ChessBoard::move(
+        std::pair<int, int> from, std::pair<int, int> to, char promote
+    ){
     if(!this->gameRunning){
         std::cout << "Game already ended!!!" << std::endl;
     }
@@ -282,7 +313,14 @@ bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
         return false;
     }
     
-    if(this->board[curr] % 10 == PAWN){
+    if(promote <= PAWN || promote >= KING){
+        return false;
+    }
+    char currPiece = this->board[curr];
+    this->board[target] = this->board[curr];
+    this->board[curr] = 0;
+
+    if(currPiece % 10 == PAWN){
         if(std::abs(curr - target) == 16){
             if(this->whiteTurn){
                 this->whitePassant = target;
@@ -296,10 +334,16 @@ bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
                 if(target + 8 == this->blackPassant){
                     this->board[this->blackPassant] = 0;
                 }
+                else if(target < 8){
+                    this->board[target] = promote + 10;
+                }
             }
             else{
                 if(target - 8 == this->whitePassant){
                     this->board[this->whitePassant] = 0;
+                }
+                else if(target >=56){
+                    this->board[target] = promote;
                 }
             }
         }
@@ -317,7 +361,7 @@ bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
         this->whiteQueenSideCastle = false;
     }
 
-    if(this->board[curr] % 10 == KING){
+    if(currPiece % 10 == KING){
         if(this->whiteTurn){
             this->whiteKingSideCastle = false;
             this->whiteQueenSideCastle = false;
@@ -345,10 +389,6 @@ bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
             this->blackKingPos = target;
         }
     }
-
-    this->board[target] = this->board[curr];
-    this->board[curr] = 0;
-
     this->switchTurn();
 
     return true;

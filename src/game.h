@@ -43,15 +43,19 @@ private:
     float gridSize;
     float pieceScale;
     int textureDisplaySize;
-    std::pair<int, int> selectedPiece;
+    std::pair<int, int> moveFrom;
+    std::pair<int, int> moveTo;
     std::vector<int> validTargets;
 
     ChessBoard *board;
     std::vector<char> currBoard;
+
+    bool promotion;
     
 
     void handleMouseClick();
     void initTextures();
     void drawPieces();
+    void displayOverlay();
 };
 
