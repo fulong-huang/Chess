@@ -28,6 +28,14 @@ ChessBoard::ChessBoard(){
     this->whiteKingSideCastle = true;
 }
 
+std::vector<int> ChessBoard::getValidMovements(int row, int col){
+    int from = row * 8 + col;
+    if(this->validMovements.find(from) == this->validMovements.end()){
+        return {};
+    }
+    return this->validMovements[from];
+}
+
 void ChessBoard::findValidMovements(){
     this->validMovements.clear();
     for(int i = 0; i < this->board.size(); i++){

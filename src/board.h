@@ -23,7 +23,7 @@ public:
 
     ChessBoard& operator=(ChessBoard board);
     void setBoard(std::vector<char> target, bool turn = true);
-    
+    std::vector<int> getValidMovements(int row, int col);
 
 private:
     std::vector<char> board;

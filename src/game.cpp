@@ -27,7 +27,6 @@ Game::~Game(){
 }
 
 void Game::handleMouseClick(){
-    std::cout << "Handle Mouse Click" << std::endl;
     sf::Vector2i mousePos = sf::Mouse::getPosition(this->window);
     int row, col;
     row = mousePos.y / this->gridSize;
@@ -37,13 +36,14 @@ void Game::handleMouseClick(){
         if(success){
             this->currBoard = this->board->getGameBoard();
         }
-        else{
-            std::cout << "From: " << selectedPiece.first << ", " << selectedPiece.second << ", to: " << row << ", " << col << std::endl;
-        }
+        this->validTargets.clear();
         this->selectedPiece = {-1, -1};
     }
     else{
-        this->selectedPiece = {row, col};
+        this->validTargets = this->board->getValidMovements(row, col);
+        if(this->validTargets.size() != 0){
+            this->selectedPiece = {row, col};
+        }
     }
 }
 
@@ -90,11 +90,17 @@ void Game::drawPieces(){
         sprite.setPosition(xPos, yPos);
         this->window.draw(sprite);
     }
-    if(this->selectedPiece.first != -1){
+    if(this->validTargets.size() != 0){
         sf::CircleShape circle(this->gridSize / 2);
         circle.setFillColor(sf::Color(128, 128, 128, 128));
         circle.setPosition(this->selectedPiece.second * this->gridSize, this->selectedPiece.first * this->gridSize);
         this->window.draw(circle);
+
+        circle.setRadius(this->gridSize / 4);
+        for(int idx : this->validTargets){
+            circle.setPosition( (idx % 8) * this->gridSize + this->gridSize / 4, (int)(idx / 8) * this->gridSize +  this->gridSize / 4);            
+            this->window.draw(circle);
+        }
     }
 }
 

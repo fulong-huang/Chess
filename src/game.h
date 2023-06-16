@@ -44,6 +44,7 @@ private:
     float pieceScale;
     int textureDisplaySize;
     std::pair<int, int> selectedPiece;
+    std::vector<int> validTargets;
 
     ChessBoard *board;
     std::vector<char> currBoard;
