@@ -38,6 +38,8 @@ private:
     sf::Texture wkingTexture;
 
     sf::Sprite background;
+    sf::Font font;
+    sf::Text gameOverText;
 
     bool running;
     float gridSize;
@@ -51,10 +53,12 @@ private:
     std::vector<char> currBoard;
 
     bool promotion;
+    sf::Vector2f windowSize;
     
 
     void handleMouseClick();
     void initTextures();
+    void initText();
     void drawPieces();
     void displayOverlay();
 };

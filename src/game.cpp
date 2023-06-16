@@ -10,17 +10,19 @@ Game::Game(){
     this->running = true;
 
     this->window.setFramerateLimit(15);
-    initTextures();
+    this->initTextures();
 
     this->textureDisplaySize = 42;
     // NOT RESIZABLE YET
-    resizeBoard();
+    this->resizeBoard();
     //count = idx = 0;
+    this->initText();
 
     this->board = new ChessBoard();
     this->currBoard = this->board->getGameBoard();
     this->moveFrom = {-1, -1};
     this->promotion = false;
+
 }
 
 Game::~Game(){
@@ -28,6 +30,10 @@ Game::~Game(){
 }
 
 void Game::handleMouseClick(){
+    if(!this->board->gameIsRunning()){
+        this->board->resetBoard();
+        this->currBoard = this->board->getGameBoard();
+    }
     sf::Vector2i mousePos = sf::Mouse::getPosition(this->window);
     if(this->promotion){
         this->promotion = false;
@@ -122,6 +128,14 @@ void Game::drawPieces(){
 }
 
 void Game::displayOverlay(){
+    if(!this->board->gameIsRunning()){
+        sf::RectangleShape rectOverlay;
+        rectOverlay.setSize(this->windowSize);
+        rectOverlay.setFillColor(sf::Color(128, 128, 128, 192));
+        this->window.draw(rectOverlay);
+        this->window.draw(this->gameOverText);
+        return;
+    }
     if(this->validTargets.size() != 0){
         sf::CircleShape circle(this->gridSize / 2);
         circle.setFillColor(sf::Color(128, 128, 128, 192));
@@ -142,9 +156,9 @@ void Game::displayOverlay(){
         int mouseX = sf::Mouse::getPosition(this->window).x;
         sf::Vector2f rectSize = {this->gridSize * 2, this->gridSize * 8};
         sf::RectangleShape darkRect(rectSize);
-        darkRect.setFillColor(sf::Color(128, 128, 128, 128));
         sf::RectangleShape lightRect(rectSize);
-        lightRect.setFillColor(sf::Color(128, 128, 128, 192));
+        darkRect.setFillColor(sf::Color(128, 128, 128, 192));
+        lightRect.setFillColor(sf::Color(128, 128, 128, 128));
         for(int i = 0; i < 4; i++){
             if(mouseX <= this->gridSize * 2 * (i + 1) &&
                     mouseX > this->gridSize * 2 * i){
@@ -199,31 +213,32 @@ void Game::resizeBoard(){
     sf::Vector2u textureSize = this->backgroundTexture.getSize();
     this->background.setTextureRect(sf::IntRect(0, 0, textureSize.x * 4, textureSize.y * 4));
     this->background.setScale(min / (textureSize.x * 4 - 2), min / (textureSize.x * 4 - 4));
+    this->windowSize = {this->gridSize * 8, this->gridSize * 8};
 }
 
 void Game::initTextures(){
-    std::string imgDir = std::__fs::filesystem::path(__FILE__).parent_path();
-    imgDir += "/../imgs/";
+    std::string srcDir = std::__fs::filesystem::path(__FILE__).parent_path();
+    srcDir += "/../";
 
-    this->backgroundTexture.loadFromFile(imgDir + "chessboard.png");
+    this->backgroundTexture.loadFromFile(srcDir + "imgs/chessboard.png");
     this->backgroundTexture.setRepeated(true);
     this->background.setTexture(this->backgroundTexture);
 //    sf::Color overLayColor(150, 150, 150, 200);
 //    this->background.setColor(overLayColor);
 
-    this->pawnTexture.loadFromFile(imgDir + "pawn1.png");
-    this->rookTexture.loadFromFile(imgDir + "rook1.png");
-    this->knightTexture.loadFromFile(imgDir + "knight1.png");
-    this->bishopTexture.loadFromFile(imgDir + "bishop1.png");
-    this->queenTexture.loadFromFile(imgDir + "queen1.png");
-    this->kingTexture.loadFromFile(imgDir + "king1.png");
+    this->pawnTexture.loadFromFile(srcDir + "imgs/pawn1.png");
+    this->rookTexture.loadFromFile(srcDir + "imgs/rook1.png");
+    this->knightTexture.loadFromFile(srcDir + "imgs/knight1.png");
+    this->bishopTexture.loadFromFile(srcDir + "imgs/bishop1.png");
+    this->queenTexture.loadFromFile(srcDir + "imgs/queen1.png");
+    this->kingTexture.loadFromFile(srcDir + "imgs/king1.png");
 
-    this->wpawnTexture.loadFromFile(imgDir + "pawn.png");
-    this->wrookTexture.loadFromFile(imgDir + "rook.png");
-    this->wknightTexture.loadFromFile(imgDir + "knight.png");
-    this->wbishopTexture.loadFromFile(imgDir + "bishop.png");
-    this->wqueenTexture.loadFromFile(imgDir + "queen.png");
-    this->wkingTexture.loadFromFile(imgDir + "king.png");
+    this->wpawnTexture.loadFromFile(srcDir + "imgs/pawn.png");
+    this->wrookTexture.loadFromFile(srcDir + "imgs/rook.png");
+    this->wknightTexture.loadFromFile(srcDir + "imgs/knight.png");
+    this->wbishopTexture.loadFromFile(srcDir + "imgs/bishop.png");
+    this->wqueenTexture.loadFromFile(srcDir + "imgs/queen.png");
+    this->wkingTexture.loadFromFile(srcDir + "imgs/king.png");
 
 
     this->textureLists = {
@@ -235,7 +250,21 @@ void Game::initTextures(){
         wpawnTexture, wrookTexture, wknightTexture, 
         wbishopTexture, wqueenTexture, wkingTexture,
     };
+
+    if(!this->font.loadFromFile(srcDir + "Silkscreen/slkscre.ttf")){
+        std::cout << "Failed to load font" << std::endl;
+    }
 }
 
+void Game::initText(){
+    this->gameOverText.setFont(this->font);
+    this->gameOverText.setString("Game\nOver");
+    this->gameOverText.setCharacterSize(86);
+    this->gameOverText.setPosition( this->gridSize * 2 + 10,
+                                    this->gridSize * 2 + 10);
+    this->gameOverText.setFillColor(sf::Color::Black);
+    this->gameOverText.setStyle(sf::Text::Bold);
+    this->window.draw(this->gameOverText);
+}
 
 
