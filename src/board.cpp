@@ -37,6 +37,7 @@ void ChessBoard::findValidMovements(){
         if(this->board[i] > 10 != this->whiteTurn){
             continue;
         }
+        std::vector<int> lineMoves;
         int row = i / 8;
         int col = i % 8;
         this->validMovements[i] = {};
@@ -48,8 +49,8 @@ void ChessBoard::findValidMovements(){
                         this->validMovements[i].push_back(i + 9);
                     }
                     if(checkPawnMovement(i, {row + 1, col - 1}) && 
-                            this->validateMove(i, i - 9)){
-                        this->validMovements[i].push_back(i - 9);
+                            this->validateMove(i, i + 7)){
+                        this->validMovements[i].push_back(i + 7);
                     }
                     if(checkPawnMovement(i, {row - 1, col + 1}) && 
                             this->validateMove(i, i - 7)){
@@ -118,36 +119,32 @@ void ChessBoard::findValidMovements(){
             case ROOK:
                 {
                     for(int x = i + 1; x % 8 != 0; x++){
-                        if(checkRookMovement(i, x) &&
-                                this->validateMove(i, x)){
-                            this->validMovements[i].push_back(x);
+                        if(checkRookMovement(i, x)){
+                            lineMoves.push_back(x);
                         }
                         else{
                             break;
                         }
                     }
                     for(int x = i - 1; x % 8 != 7 && x >= 0; x--){
-                        if(checkRookMovement(i, x) &&
-                                this->validateMove(i, x)){
-                            this->validMovements[i].push_back(x);
+                        if(checkRookMovement(i, x)){
+                            lineMoves.push_back(x);
                         }
                         else{
                             break;
                         }
                     }
                     for(int x = i + 8; x < this->board.size(); x += 8){
-                        if(checkRookMovement(i, x) &&
-                                this->validateMove(i, x)){
-                            this->validMovements[i].push_back(x);
+                        if(checkRookMovement(i, x)){
+                            lineMoves.push_back(x);
                         }
                         else{
                             break;
                         }
                     }
                     for(int x = i - 8; x >= 0; x -= 8){
-                        if(checkRookMovement(i, x) &&
-                                this->validateMove(i, x)){
-                            this->validMovements[i].push_back(x);
+                        if(checkRookMovement(i, x)){
+                            lineMoves.push_back(x);
                         }
                         else{
                             break;
@@ -160,36 +157,32 @@ void ChessBoard::findValidMovements(){
             case BISHOP:
                 {
                     for(int x = i + 9; x % 8 != 0 && x < 64; x += 9){
-                        if(checkBishopMovement(i, x) &&
-                                this->validateMove(i, x)){
-                            this->validMovements[i].push_back(x);
+                        if(checkBishopMovement(i, x)){
+                            lineMoves.push_back(x);
                         }
                         else{
                             break;
                         }
                     }
                     for(int x = i + 7; (x - 7) % 8 != 0 && x < 64; x += 7){
-                        if(checkBishopMovement(i, x) &&
-                                this->validateMove(i, x)){
-                            this->validMovements[i].push_back(x);
+                        if(checkBishopMovement(i, x)){
+                            lineMoves.push_back(x);
                         }
                         else{
                             break;
                         }
                     }
                     for(int x = i - 9; (x + 9) % 8 != 0 && x >= 0; x -= 9){
-                        if(checkBishopMovement(i, x) &&
-                                this->validateMove(i, x)){
-                            this->validMovements[i].push_back(x);
+                        if(checkBishopMovement(i, x)){
+                            lineMoves.push_back(x);
                         }
                         else{
                             break;
                         }
                     }
                     for(int x = i - 7; x % 8 != 0 && x >= 0; x -= 7){
-                        if(checkBishopMovement(i, x) &&
-                                this->validateMove(i, x)){
-                            this->validMovements[i].push_back(x);
+                        if(checkBishopMovement(i, x)){
+                            lineMoves.push_back(x);
                         }
                         else{
                             break;
@@ -216,10 +209,16 @@ void ChessBoard::findValidMovements(){
                     break;
                 }
         }
+        for(int moveTo : lineMoves){
+            if(this->validateMove(i, moveTo)){
+                this->validMovements[i].push_back(moveTo);
+            }
+        }
         if(this->validMovements[i].size() == 0){
             this->validMovements.erase(i);
         }
     }
+    
     if(this->validMovements.size() == 0){
         this->gameRunning = false;
     }
@@ -265,7 +264,6 @@ bool ChessBoard::move(std::pair<int, int> from, std::pair<int, int> to){
         return false;
     }
 
-    this->findValidMovements();
     if(this->validMovements.find(curr) == this->validMovements.end()){
         return false;
     }
@@ -503,6 +501,14 @@ void ChessBoard::switchTurn(){
         this->blackPassant = -64;
     }
     this->findValidMovements();
+//    std::cout << "=======" << std::endl;
+//    for(auto i : this->validMovements){
+//        std::cout << i.first << ": " << std::endl << "\t";
+//        for(int n : i.second){
+//            std::cout <<  n << ", ";
+//        }
+//        std::cout << std::endl;
+//    }
 }
 
 bool ChessBoard::gameIsRunning(){
@@ -568,12 +574,16 @@ bool ChessBoard::checkPawnMovement(
 
     if(this->whiteTurn){
         bool movingBackward = from.first <= to.first;
-        if(movingBackward) return false;
+        if(movingBackward){
+            return false;
+        }
         rowDiff = from.first - to.first;
     }
     else{
         bool movingBackward = to.first <= from.first;
-        if(movingBackward) return false;
+        if(movingBackward){
+            return false;
+        }
         rowDiff = to.first - from.first;
     }
     

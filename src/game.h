@@ -38,15 +38,18 @@ private:
     sf::Texture wkingTexture;
 
     sf::Sprite background;
+
     bool running;
     float gridSize;
     float pieceScale;
     int textureDisplaySize;
+    std::pair<int, int> selectedPiece;
 
     ChessBoard *board;
     std::vector<char> currBoard;
+    
 
-    //int count, idx;
+    void handleMouseClick();
     void initTextures();
     void drawPieces();
 };

@@ -19,10 +19,32 @@ Game::Game(){
 
     this->board = new ChessBoard();
     this->currBoard = this->board->getGameBoard();
+    this->selectedPiece = {-1, -1};
 }
 
 Game::~Game(){
     delete this->board;
+}
+
+void Game::handleMouseClick(){
+    std::cout << "Handle Mouse Click" << std::endl;
+    sf::Vector2i mousePos = sf::Mouse::getPosition(this->window);
+    int row, col;
+    row = mousePos.y / this->gridSize;
+    col = mousePos.x / this->gridSize;
+    if(this->selectedPiece.first != -1){
+        bool success = this->board->move(this->selectedPiece, {row, col});
+        if(success){
+            this->currBoard = this->board->getGameBoard();
+        }
+        else{
+            std::cout << "From: " << selectedPiece.first << ", " << selectedPiece.second << ", to: " << row << ", " << col << std::endl;
+        }
+        this->selectedPiece = {-1, -1};
+    }
+    else{
+        this->selectedPiece = {row, col};
+    }
 }
 
 void Game::update(){
@@ -37,6 +59,10 @@ void Game::update(){
                 {
                     this->resizeBoard();
                     break;
+                }
+            case sf::Event::MouseButtonPressed:
+                {
+                    this->handleMouseClick();
                 }
             default:
                 break;
@@ -63,6 +89,12 @@ void Game::drawPieces(){
         yPos = this->gridSize * (int)(idx / 8);
         sprite.setPosition(xPos, yPos);
         this->window.draw(sprite);
+    }
+    if(this->selectedPiece.first != -1){
+        sf::CircleShape circle(this->gridSize / 2);
+        circle.setFillColor(sf::Color(128, 128, 128, 128));
+        circle.setPosition(this->selectedPiece.second * this->gridSize, this->selectedPiece.first * this->gridSize);
+        this->window.draw(circle);
     }
 }
 
