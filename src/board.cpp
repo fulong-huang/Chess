@@ -65,6 +65,10 @@ std::vector<int> ChessBoard::getValidMovements(int row, int col){
     return this->validMovements[from];
 }
 
+bool ChessBoard::isWhiteTurn(){
+    return this->whiteTurn;
+}
+
 void ChessBoard::findValidMovements(){
     this->validMovements.clear();
     for(int i = 0; i < this->board.size(); i++){

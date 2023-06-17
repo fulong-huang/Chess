@@ -11,19 +11,26 @@ Game::Game(){
 
     this->window.setFramerateLimit(15);
     this->initTextures();
+    this->initSprite();
 
     this->textureDisplaySize = 42;
     // NOT RESIZABLE YET
     this->resizeBoard();
-    //count = idx = 0;
     this->initText();
 
     this->board = new ChessBoard();
+
+    this->initGame();
+}
+
+void Game::initGame(){
+    this->board->resetBoard();
     this->currBoard = this->board->getGameBoard();
     this->moveFrom = {-1, -1};
     this->promotion = false;
     this->prevFrom = {-1, -1};
-
+    this->validTargets = {};
+    this->whiteTurn = this->board->isWhiteTurn();
 }
 
 Game::~Game(){
@@ -32,8 +39,8 @@ Game::~Game(){
 
 void Game::handleMouseClick(){
     if(!this->board->gameIsRunning()){
-        this->board->resetBoard();
-        this->currBoard = this->board->getGameBoard();
+        this->initGame();
+        return;
     }
     sf::Vector2i mousePos = sf::Mouse::getPosition(this->window);
     if(this->promotion){
@@ -53,7 +60,10 @@ void Game::handleMouseClick(){
         }
         if(this->board->move(this->moveFrom, this->moveTo, targetPiece)){
             this->currBoard = this->board->getGameBoard();
+            this->prevFrom = this->moveFrom;
+            this->prevTo = this->moveTo;
         }
+        this->whiteTurn = this->board->isWhiteTurn();
         this->moveFrom = {-1, -1};
         this->validTargets = {};
         return;
@@ -96,7 +106,10 @@ void Game::handleMouseClick(){
         bool success = this->board->move(this->moveFrom, {row, col});
         if(success){
             this->currBoard = this->board->getGameBoard();
+            this->prevFrom = this->moveFrom;
+            this->prevTo = {row, col};
         }
+        this->whiteTurn = this->board->isWhiteTurn();
         this->validTargets.clear();
         this->moveFrom = {-1, -1};
     }
@@ -130,6 +143,19 @@ void Game::update(){
 }
 
 void Game::drawPieces(){
+    if(prevFrom.first != -1){
+        sf::RectangleShape lastMove;
+        lastMove.setSize({this->gridSize + 2, this->gridSize + 2});
+        lastMove.setFillColor(sf::Color(50, 200, 50, 128));
+        lastMove.setPosition(
+                prevFrom.second * this->gridSize - 1,
+                prevFrom.first * this->gridSize - 1);
+        this->window.draw(lastMove);
+        lastMove.setPosition(
+                prevTo.second * this->gridSize - 1, 
+                prevTo.first * this->gridSize - 1);
+        this->window.draw(lastMove);
+    }
     sf::Sprite sprite;
     float xPos, yPos;
     sprite.scale(this->pieceScale, this->pieceScale);
@@ -218,6 +244,12 @@ void Game::displayOverlay(){
 void Game::display(){
     this->window.clear(sf::Color(100, 100, 100));
     this->window.draw(this->background);
+//    if(this->whiteTurn){
+//        this->window.draw(this->overlayWhite);
+//    }
+//    else{
+//        this->window.draw(this->overlayBlack);
+//    }
     this->drawPieces();
     this->displayOverlay();
     this->window.display();
@@ -237,7 +269,15 @@ void Game::resizeBoard(){
 
     sf::Vector2u textureSize = this->backgroundTexture.getSize();
     this->background.setTextureRect(sf::IntRect(0, 0, textureSize.x * 4, textureSize.y * 4));
-    this->background.setScale(min / (textureSize.x * 4 - 2), min / (textureSize.x * 4 - 4));
+    this->background.setScale(min / (textureSize.x * 4 - 1), min / (textureSize.x * 4 - 4));
+    textureSize = this->kingTexture.getSize();
+    float scale = this->gridSize * 5 / textureSize.x;
+    this->overlayWhite.setColor(sf::Color(255, 255, 255, 30));
+    this->overlayWhite.setScale(scale, scale);
+    this->overlayWhite.setPosition(this->gridSize * 1.5, this->gridSize * 1.5);
+    this->overlayBlack.setColor(sf::Color(255, 255, 255, 55));
+    this->overlayBlack.setScale(scale, scale);
+    this->overlayBlack.setPosition(this->gridSize * 1.5, this->gridSize * 1.5);
     this->windowSize = {this->gridSize * 8, this->gridSize * 8};
 }
 
@@ -247,7 +287,6 @@ void Game::initTextures(){
 
     this->backgroundTexture.loadFromFile(srcDir + "imgs/chessboard.png");
     this->backgroundTexture.setRepeated(true);
-    this->background.setTexture(this->backgroundTexture);
 //    sf::Color overLayColor(150, 150, 150, 200);
 //    this->background.setColor(overLayColor);
 
@@ -279,6 +318,12 @@ void Game::initTextures(){
     if(!this->font.loadFromFile(srcDir + "Silkscreen/slkscre.ttf")){
         std::cout << "Failed to load font" << std::endl;
     }
+}
+
+void Game::initSprite(){
+    this->background.setTexture(this->backgroundTexture);
+    this->overlayWhite.setTexture(this->wknightTexture);
+    this->overlayBlack.setTexture(this->knightTexture);
 }
 
 void Game::initText(){

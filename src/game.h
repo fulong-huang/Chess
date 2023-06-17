@@ -38,6 +38,8 @@ private:
     sf::Texture wkingTexture;
 
     sf::Sprite background;
+    sf::Sprite overlayWhite;
+    sf::Sprite overlayBlack;
     sf::Font font;
     sf::Text gameOverText;
     sf::Text restartText;
@@ -46,6 +48,7 @@ private:
     float gridSize;
     float pieceScale;
     int textureDisplaySize;
+    bool whiteTurn;
     std::pair<int, int> moveFrom;
     std::pair<int, int> moveTo;
     std::pair<int, int> prevFrom;
@@ -59,9 +62,11 @@ private:
     sf::Vector2f windowSize;
     
 
+    void initGame();
     void handleMouseClick();
     void initTextures();
     void initText();
+    void initSprite();
     void drawPieces();
     void displayOverlay();
 };

@@ -20,6 +20,7 @@ public:
     bool gameIsRunning();
     bool compare(ChessBoard board2);
     bool isSelectable(std::pair<int, int> piece);
+    bool isWhiteTurn();
 
     void printBoard();
     std::vector<char> getBoard();
