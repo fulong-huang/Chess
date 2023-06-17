@@ -7,7 +7,6 @@ class Game{
 
 public:
     Game();
-    ~Game();
 
     void update();
     void display();
@@ -18,6 +17,7 @@ public:
 
 
 private:
+    sf::View view;
     sf::RenderWindow window;
     sf::Event event;
     std::vector<sf::Texture> textureLists;
@@ -38,8 +38,18 @@ private:
     sf::Texture wkingTexture;
 
     sf::Sprite background;
-    sf::Sprite overlayWhite;
-    sf::Sprite overlayBlack;
+    sf::Sprite pawnSprite;
+    sf::Sprite rookSprite;
+    sf::Sprite knightSprite;
+    sf::Sprite bishopSprite;
+    sf::Sprite queenSprite;
+    sf::Sprite kingSprite;
+    sf::Sprite wpawnSprite;
+    sf::Sprite wrookSprite;
+    sf::Sprite wknightSprite;
+    sf::Sprite wbishopSprite;
+    sf::Sprite wqueenSprite;
+    sf::Sprite wkingSprite;
     sf::Font font;
     sf::Text gameOverText;
     sf::Text restartText;
@@ -55,13 +65,14 @@ private:
     std::pair<int, int> prevTo;
     std::vector<int> validTargets;
 
-    ChessBoard *board;
+    ChessBoard board;
     std::vector<char> currBoard;
 
     bool promotion;
-    sf::Vector2f windowSize;
     
+    std::pair<float, float> padding;
 
+    void setViewPort();
     void initGame();
     void handleMouseClick();
     void initTextures();

@@ -3,46 +3,86 @@
 
 Game::Game(){
     this->window.create(
-            sf::VideoMode(600, 600), 
+            sf::VideoMode(800, 600), 
             "Chess", 
-            sf::Style::Titlebar | sf::Style::Close //| sf::Style::Resize
+            sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize
             );
-    this->running = true;
-
     this->window.setFramerateLimit(15);
+
+    this->textureDisplaySize = 42;
+    this->gridSize = 125;
+    this->pieceScale = 115.f / this->textureDisplaySize;
+
+    this->initGame();
+    // NOT RESIZABLE YET
+    this->resizeBoard();
+
     this->initTextures();
     this->initSprite();
 
-    this->textureDisplaySize = 42;
-    // NOT RESIZABLE YET
-    this->resizeBoard();
     this->initText();
 
-    this->board = new ChessBoard();
 
-    this->initGame();
+}
+void Game::setViewPort(){
+    sf::Vector2u winSize = this->window.getSize();
+    float windowRatio = (float)winSize.x / winSize.y;
+    float viewRatio = view.getSize().x / (float) view.getSize().y;
+    float sizeX = 1;
+    float sizeY = 1;
+    float posX = 0;
+    float posY = 0;
+
+    bool horizontalSpacing = true;
+    if (windowRatio < viewRatio)
+        horizontalSpacing = false;
+
+    // If horizontalSpacing is true, the black bars will appear on the left and right side.
+    // Otherwise, the black bars will appear on the top and bottom.
+
+    if (horizontalSpacing) {
+        sizeX = viewRatio / windowRatio;
+        posX = (1 - sizeX) / 2.f;
+    }
+
+    else {
+        sizeY = windowRatio / viewRatio;
+        posY = (1 - sizeY) / 2.f;
+    }
+
+    this->view.setViewport( sf::FloatRect(posX, posY, sizeX, sizeY) );
+    //this->view.setViewport(sf::FloatRect(0, 0, 1, 1));
 }
 
 void Game::initGame(){
-    this->board->resetBoard();
-    this->currBoard = this->board->getGameBoard();
+    this->running = true;
+    this->board.resetBoard();
+    this->currBoard = this->board.getGameBoard();
     this->moveFrom = {-1, -1};
     this->promotion = false;
     this->prevFrom = {-1, -1};
     this->validTargets = {};
-    this->whiteTurn = this->board->isWhiteTurn();
+    this->whiteTurn = this->board.isWhiteTurn();
 }
 
-Game::~Game(){
-    delete this->board;
+void Game::resizeBoard(){
+    sf::Vector2f viewSize = this->view.getSize();
+    this->setViewPort();
+    this->window.setView(this->view);
 }
 
 void Game::handleMouseClick(){
-    if(!this->board->gameIsRunning()){
+    if(!this->board.gameIsRunning()){
         this->initGame();
         return;
     }
-    sf::Vector2i mousePos = sf::Mouse::getPosition(this->window);
+    sf::Vector2f mousePos = this->window.mapPixelToCoords(sf::Mouse::getPosition(this->window));
+    if(mousePos.x < 0 || mousePos.y < 0 || 
+            mousePos.x > 1000 || mousePos.y > 1000){
+        this->validTargets = {};
+        this->moveFrom = {-1, -1};
+        return;
+    }
     if(this->promotion){
         this->promotion = false;
         char targetPiece;
@@ -58,12 +98,12 @@ void Game::handleMouseClick(){
         else{
             targetPiece = QUEEN;
         }
-        if(this->board->move(this->moveFrom, this->moveTo, targetPiece)){
-            this->currBoard = this->board->getGameBoard();
+        if(this->board.move(this->moveFrom, this->moveTo, targetPiece)){
+            this->currBoard = this->board.getGameBoard();
             this->prevFrom = this->moveFrom;
             this->prevTo = this->moveTo;
         }
-        this->whiteTurn = this->board->isWhiteTurn();
+        this->whiteTurn = this->board.isWhiteTurn();
         this->moveFrom = {-1, -1};
         this->validTargets = {};
         return;
@@ -71,13 +111,13 @@ void Game::handleMouseClick(){
     int row, col;
     row = mousePos.y / this->gridSize;
     col = mousePos.x / this->gridSize;
-    if(this->board->isSelectable({row, col})){
+    if(this->board.isSelectable({row, col})){
         if(row == this->moveFrom.first && col == this->moveFrom.second){
             this->moveFrom = {-1, -1};
             this->validTargets = {};
             return;
         }
-        this->validTargets = this->board->getValidMovements(row, col);
+        this->validTargets = this->board.getValidMovements(row, col);
         this->moveFrom = {row, col};
         return;
     }
@@ -103,18 +143,18 @@ void Game::handleMouseClick(){
             this->moveTo = {row, col};
             return;
         }
-        bool success = this->board->move(this->moveFrom, {row, col});
+        bool success = this->board.move(this->moveFrom, {row, col});
         if(success){
-            this->currBoard = this->board->getGameBoard();
+            this->currBoard = this->board.getGameBoard();
             this->prevFrom = this->moveFrom;
             this->prevTo = {row, col};
         }
-        this->whiteTurn = this->board->isWhiteTurn();
+        this->whiteTurn = this->board.isWhiteTurn();
         this->validTargets.clear();
         this->moveFrom = {-1, -1};
     }
     else{
-//        this->validTargets = this->board->getValidMovements(row, col);
+//        this->validTargets = this->board.getValidMovements(row, col);
 //        this->moveFrom = {row, col};
     }
 }
@@ -156,31 +196,29 @@ void Game::drawPieces(){
                 prevTo.first * this->gridSize - 1);
         this->window.draw(lastMove);
     }
-    sf::Sprite sprite;
     float xPos, yPos;
-    sprite.scale(this->pieceScale, this->pieceScale);
-    int i;
+    int i, spriteIdx;
     for(int idx = 0; idx < this->currBoard.size(); idx++){
         i = this->currBoard[idx];
         if(i == 0) continue;
         if(i > 10){
-            sprite.setTexture(this->textureLists[i % 10 + 6]);
+            spriteIdx = i % 10 + 6;
         }
         else{
-            sprite.setTexture(this->textureLists[i % 10]);
+            spriteIdx = i % 10;
         }
         
         xPos = this->gridSize * (idx % 8);
         yPos = this->gridSize * (int)(idx / 8);
-        sprite.setPosition(xPos + 5, yPos + 5);
-        this->window.draw(sprite);
+        this->spriteLists[spriteIdx].setPosition(xPos + 5, yPos + 5);
+        this->window.draw(this->spriteLists[spriteIdx]);
     }
 }
 
 void Game::displayOverlay(){
-    if(!this->board->gameIsRunning()){
+    if(!this->board.gameIsRunning()){
         sf::RectangleShape rectOverlay;
-        rectOverlay.setSize(this->windowSize);
+        rectOverlay.setSize(sf::Vector2f(1000, 1000));
         rectOverlay.setFillColor(sf::Color(128, 128, 128, 192));
         this->window.draw(rectOverlay);
         this->window.draw(this->gameOverText);
@@ -242,14 +280,9 @@ void Game::displayOverlay(){
 }
 
 void Game::display(){
-    this->window.clear(sf::Color(100, 100, 100));
-    this->window.draw(this->background);
-//    if(this->whiteTurn){
-//        this->window.draw(this->overlayWhite);
-//    }
-//    else{
-//        this->window.draw(this->overlayBlack);
-//    }
+    this->window.clear();
+    this->window.setView(this->view);
+    this->window.draw(this->spriteLists[0]);
     this->drawPieces();
     this->displayOverlay();
     this->window.display();
@@ -259,36 +292,13 @@ bool Game::isRunning(){
     return this->running;
 }
 
-void Game::resizeBoard(){
-    sf::Vector2u windowSize = this->window.getSize();
-    float min = std::min(windowSize.x, windowSize.y);
-
-    this->gridSize = min / 8;
-
-    this->pieceScale = (this->gridSize - 10) / this->textureDisplaySize;
-
-    sf::Vector2u textureSize = this->backgroundTexture.getSize();
-    this->background.setTextureRect(sf::IntRect(0, 0, textureSize.x * 4, textureSize.y * 4));
-    this->background.setScale(min / (textureSize.x * 4 - 1), min / (textureSize.x * 4 - 4));
-    textureSize = this->kingTexture.getSize();
-    float scale = this->gridSize * 5 / textureSize.x;
-    this->overlayWhite.setColor(sf::Color(255, 255, 255, 30));
-    this->overlayWhite.setScale(scale, scale);
-    this->overlayWhite.setPosition(this->gridSize * 1.5, this->gridSize * 1.5);
-    this->overlayBlack.setColor(sf::Color(255, 255, 255, 55));
-    this->overlayBlack.setScale(scale, scale);
-    this->overlayBlack.setPosition(this->gridSize * 1.5, this->gridSize * 1.5);
-    this->windowSize = {this->gridSize * 8, this->gridSize * 8};
-}
 
 void Game::initTextures(){
     std::string srcDir = std::__fs::filesystem::path(__FILE__).parent_path();
-    srcDir += "/../";
+    srcDir += "/../resources/";
 
     this->backgroundTexture.loadFromFile(srcDir + "imgs/chessboard.png");
     this->backgroundTexture.setRepeated(true);
-//    sf::Color overLayColor(150, 150, 150, 200);
-//    this->background.setColor(overLayColor);
 
     this->pawnTexture.loadFromFile(srcDir + "imgs/pawn1.png");
     this->rookTexture.loadFromFile(srcDir + "imgs/rook1.png");
@@ -322,14 +332,36 @@ void Game::initTextures(){
 
 void Game::initSprite(){
     this->background.setTexture(this->backgroundTexture);
-    this->overlayWhite.setTexture(this->wknightTexture);
-    this->overlayBlack.setTexture(this->knightTexture);
+    float scale = this->backgroundTexture.getSize().x * 4;
+
+    this->background.setTextureRect(sf::IntRect(0, 0, scale, scale));
+    this->background.setScale(1000.f/ (scale - 1), 1000.f / (scale - 4));
+    
+    this->spriteLists = {
+        this->background,
+        this->pawnSprite,
+        this->rookSprite,
+        this->knightSprite,
+        this->bishopSprite,
+        this->queenSprite,
+        this->kingSprite,
+        this->wpawnSprite,
+        this->wrookSprite,
+        this->wknightSprite,
+        this->wbishopSprite,
+        this->wqueenSprite,
+        this->wkingSprite,
+    };
+    for(int i = 1; i < spriteLists.size(); i++){
+        this->spriteLists[i].setTexture(this->textureLists[i]);
+        this->spriteLists[i].scale(this->pieceScale, this->pieceScale);
+    }
 }
 
 void Game::initText(){
     this->gameOverText.setFont(this->font);
     this->gameOverText.setString("Game\nOver");
-    this->gameOverText.setCharacterSize(86);
+    this->gameOverText.setCharacterSize(150); // 86
     this->gameOverText.setPosition( this->gridSize * 2 + 10,
                                     this->gridSize * 2 + 10);
     this->gameOverText.setFillColor(sf::Color::Black);
@@ -337,7 +369,7 @@ void Game::initText(){
 
     this->restartText.setFont(this->font);
     this->restartText.setString("Left Click to Restart");
-    this->restartText.setCharacterSize(20);
+    this->restartText.setCharacterSize(32);
     this->restartText.setPosition(this->gridSize * 2 + 3, 
                                     this->gridSize * 5 + 10);
     this->restartText.setFillColor(sf::Color::Black);
