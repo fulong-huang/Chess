@@ -187,7 +187,7 @@ void ChessBoard::findValidMovements(){
                             break;
                         }
                     }
-                    if(this->board[i] == ROOK){
+                    if(this->board[i] % 10 == ROOK){
                         break;
                     }
                 }
@@ -561,6 +561,16 @@ void ChessBoard::switchTurn(){
 
 bool ChessBoard::gameIsRunning(){
     return this->gameRunning;
+}
+
+bool ChessBoard::isSelectable(std::pair<int, int> piece){
+    int idx = piece.first * 8 + piece.second;
+    if(idx < 0 || idx >= 64){
+        return false;
+    }
+    bool isOwnPiece = (this->board[idx] > 10) == this->whiteTurn;
+    bool notEmpty = this->board[idx] != 0;
+    return isOwnPiece && notEmpty;
 }
 
 bool ChessBoard::compare(ChessBoard board2){

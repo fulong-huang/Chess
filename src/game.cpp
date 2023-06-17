@@ -59,6 +59,16 @@ void Game::handleMouseClick(){
     int row, col;
     row = mousePos.y / this->gridSize;
     col = mousePos.x / this->gridSize;
+    if(this->board->isSelectable({row, col})){
+        if(row == this->moveFrom.first && col == this->moveFrom.second){
+            this->moveFrom = {-1, -1};
+            this->validTargets = {};
+            return;
+        }
+        this->validTargets = this->board->getValidMovements(row, col);
+        this->moveFrom = {row, col};
+        return;
+    }
     if(this->moveFrom.first != -1){
         if((row == 0 || row == 7) && 
             (this->currBoard[this->moveFrom.first * 8 + 
@@ -75,10 +85,8 @@ void Game::handleMouseClick(){
         this->moveFrom = {-1, -1};
     }
     else{
-        this->validTargets = this->board->getValidMovements(row, col);
-        if(this->validTargets.size() != 0){
-            this->moveFrom = {row, col};
-        }
+//        this->validTargets = this->board->getValidMovements(row, col);
+//        this->moveFrom = {row, col};
     }
 }
 
@@ -134,9 +142,10 @@ void Game::displayOverlay(){
         rectOverlay.setFillColor(sf::Color(128, 128, 128, 192));
         this->window.draw(rectOverlay);
         this->window.draw(this->gameOverText);
+        this->window.draw(this->restartText);
         return;
     }
-    if(this->validTargets.size() != 0){
+    if(this->moveFrom.first != -1){
         sf::CircleShape circle(this->gridSize / 2);
         circle.setFillColor(sf::Color(128, 128, 128, 192));
         circle.setPosition(
@@ -264,7 +273,13 @@ void Game::initText(){
                                     this->gridSize * 2 + 10);
     this->gameOverText.setFillColor(sf::Color::Black);
     this->gameOverText.setStyle(sf::Text::Bold);
-    this->window.draw(this->gameOverText);
+
+    this->restartText.setFont(this->font);
+    this->restartText.setString("Left Click to Restart");
+    this->restartText.setCharacterSize(20);
+    this->restartText.setPosition(this->gridSize * 2 + 3, 
+                                    this->gridSize * 5 + 10);
+    this->restartText.setFillColor(sf::Color::Black);
 }
 
 

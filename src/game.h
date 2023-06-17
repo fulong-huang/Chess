@@ -40,6 +40,7 @@ private:
     sf::Sprite background;
     sf::Font font;
     sf::Text gameOverText;
+    sf::Text restartText;
 
     bool running;
     float gridSize;
