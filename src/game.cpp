@@ -22,6 +22,7 @@ Game::Game(){
     this->currBoard = this->board->getGameBoard();
     this->moveFrom = {-1, -1};
     this->promotion = false;
+    this->prevFrom = {-1, -1};
 
 }
 
@@ -50,8 +51,9 @@ void Game::handleMouseClick(){
         else{
             targetPiece = QUEEN;
         }
-        this->board->move(this->moveFrom, this->moveTo, targetPiece);
-        this->currBoard = this->board->getGameBoard();
+        if(this->board->move(this->moveFrom, this->moveTo, targetPiece)){
+            this->currBoard = this->board->getGameBoard();
+        }
         this->moveFrom = {-1, -1};
         this->validTargets = {};
         return;
@@ -70,9 +72,23 @@ void Game::handleMouseClick(){
         return;
     }
     if(this->moveFrom.first != -1){
-        if((row == 0 || row == 7) && 
-            (this->currBoard[this->moveFrom.first * 8 + 
-             this->moveFrom.second] % 10 == PAWN)){
+        int currIdx = row * 8 + col;
+        bool isPawn = this->currBoard[this->moveFrom.first * 8 + 
+                                    this->moveFrom.second] % 10 == PAWN;
+        bool reachedEnd = (row == 0 || row == 7);
+        if(isPawn && reachedEnd){
+            bool isValidTarget = false;
+            for(int validTar : this->validTargets){
+                if(validTar == currIdx){
+                    isValidTarget = true;
+                    break;
+                }
+            }
+            if(!isValidTarget){
+                this->moveFrom = {-1, -1};
+                this->validTargets = {};
+                return;
+            }
             this->promotion = true;
             this->moveTo = {row, col};
             return;

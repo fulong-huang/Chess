@@ -48,6 +48,8 @@ private:
     int textureDisplaySize;
     std::pair<int, int> moveFrom;
     std::pair<int, int> moveTo;
+    std::pair<int, int> prevFrom;
+    std::pair<int, int> prevTo;
     std::vector<int> validTargets;
 
     ChessBoard *board;
