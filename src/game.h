@@ -55,8 +55,6 @@ private:
     sf::Text restartText;
 
     bool running;
-    float gridSize;
-    float pieceScale;
     int textureDisplaySize;
     bool whiteTurn;
     std::pair<int, int> moveFrom;
@@ -72,6 +70,8 @@ private:
     
     std::pair<float, float> padding;
     sf::Vector2f boardSize;
+    sf::Vector2f gridSize;
+    sf::Vector2f pieceScale;
 
     void setViewPort();
     void initGame();
