@@ -1,5 +1,4 @@
 #include "game.h"
-#include <filesystem>
 
 Game::Game(){
     this->window.create(
@@ -11,9 +10,10 @@ Game::Game(){
 
 
     this->initGame();
-    // NOT RESIZABLE YET
+    this->view.setSize(1000, 1000);
     this->resizeBoard();
-    this->gridSize = {840.f / 8, 125};
+    this->gridSize = {800.0/8, 125};
+    this->boardSize = {800, 1000};
 
     this->textureDisplaySize = 42;
     this->pieceScale = {
@@ -28,8 +28,8 @@ Game::Game(){
 }
 void Game::setViewPort(){
     sf::Vector2u winSize = this->window.getSize();
-    float windowRatio = (float)(winSize.x) / (winSize.y + 160);
-    float viewRatio = view.getSize().x / (float) view.getSize().y;
+    float windowRatio = (float)(winSize.x) / (winSize.y);
+    float viewRatio = 1000.f / 800;
     float sizeX = 1;
     float sizeY = 1;
     float posX = 0;
@@ -52,7 +52,6 @@ void Game::setViewPort(){
         posY = (1 - sizeY) / 2.f;
     }
    
-    this->boardSize = {840, 1000};
     this->view.setViewport( sf::FloatRect(posX, posY, sizeX, sizeY) );
     //this->view.setViewport(sf::FloatRect(0, 0, 1, 1));
 }
@@ -201,6 +200,31 @@ void Game::update(){
     }
 }
 
+void Game::display(){
+    this->window.clear();
+    this->window.setView(this->view);
+
+    this->window.draw(this->spriteLists[0]);
+    this->displaySideBar();
+
+    this->drawPieces();
+    this->displayOverlay();
+    this->window.display();
+}
+
+void Game::displaySideBar(){
+
+    sf::RectangleShape r;
+    r.setSize(sf::Vector2f(300, 500));
+    r.setPosition(800, 0);
+    r.setFillColor(sf::Color(215, 115, 5));
+    this->window.draw(r);
+
+    r.setPosition(800, 500);
+    r.setFillColor(sf::Color(135, 70, 5));
+    this->window.draw(r);
+}
+
 void Game::drawPieces(){
     if(prevFrom.first != -1){
         sf::RectangleShape lastMove;
@@ -301,15 +325,6 @@ void Game::displayOverlay(){
         s.setPosition(this->gridSize.x * 6 + 10, this->gridSize.y * 3 + 10);
         this->window.draw(s);
     }
-}
-
-void Game::display(){
-    this->window.clear();
-    this->window.setView(this->view);
-    this->window.draw(this->spriteLists[0]);
-    this->drawPieces();
-    this->displayOverlay();
-    this->window.display();
 }
 
 bool Game::isRunning(){

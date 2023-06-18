@@ -1,6 +1,7 @@
-#include "board.h"
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include "board.h"
+#include <filesystem>
 
 
 class Game{
@@ -81,5 +82,7 @@ private:
     void initSprite();
     void drawPieces();
     void displayOverlay();
+    void displaySideBar();
+    
 };
 
