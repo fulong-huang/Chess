@@ -50,7 +50,10 @@ out/build
 
 .cache/
 
+.DS_Store
+
 [Bb][Uu][Ii][Ll][Dd]/
 
 Session.vim
 
+.DS_Store

@@ -54,6 +54,12 @@ void Game::setViewPort(){
     //this->view.setViewport(sf::FloatRect(0, 0, 1, 1));
 }
 
+void Game::resizeBoard(){
+    sf::Vector2f viewSize = this->view.getSize();
+    this->setViewPort();
+    this->window.setView(this->view);
+}
+
 void Game::initGame(){
     this->running = true;
     this->board.resetBoard();
@@ -63,12 +69,6 @@ void Game::initGame(){
     this->prevFrom = {-1, -1};
     this->validTargets = {};
     this->whiteTurn = this->board.isWhiteTurn();
-}
-
-void Game::resizeBoard(){
-    sf::Vector2f viewSize = this->view.getSize();
-    this->setViewPort();
-    this->window.setView(this->view);
 }
 
 void Game::handleMouseClick(){
@@ -81,6 +81,7 @@ void Game::handleMouseClick(){
             mousePos.x > 1000 || mousePos.y > 1000){
         this->validTargets = {};
         this->moveFrom = {-1, -1};
+        this->promotion = false;
         return;
     }
     if(this->promotion){
@@ -242,7 +243,8 @@ void Game::displayOverlay(){
         }
     }
     if(this->promotion){
-        int mouseX = sf::Mouse::getPosition(this->window).x;
+        int mouseX = this->window.mapPixelToCoords(
+                sf::Mouse::getPosition(this->window)).x;
         sf::Vector2f rectSize = {this->gridSize * 2, this->gridSize * 8};
         sf::RectangleShape darkRect(rectSize);
         sf::RectangleShape lightRect(rectSize);

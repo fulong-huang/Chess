@@ -71,6 +71,7 @@ private:
     bool promotion;
     
     std::pair<float, float> padding;
+    sf::Vector2f boardSize;
 
     void setViewPort();
     void initGame();
