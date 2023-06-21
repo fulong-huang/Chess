@@ -12,8 +12,8 @@ Game::Game(){
     this->initGame();
     this->view.setSize(1000, 1000);
     this->resizeBoard();
-    this->gridSize = {800.0/8, 125};
-    this->boardSize = {800, 1000};
+    this->gridSize = {125, 125};
+    this->boardSize = {1000, 1000};
 
     this->textureDisplaySize = 42;
     this->pieceScale = {
@@ -29,7 +29,7 @@ Game::Game(){
 void Game::setViewPort(){
     sf::Vector2u winSize = this->window.getSize();
     float windowRatio = (float)(winSize.x) / (winSize.y);
-    float viewRatio = 1000.f / 800;
+    float viewRatio = 1;
     float sizeX = 1;
     float sizeY = 1;
     float posX = 0;
@@ -205,25 +205,12 @@ void Game::display(){
     this->window.setView(this->view);
 
     this->window.draw(this->spriteLists[0]);
-    this->displaySideBar();
 
     this->drawPieces();
     this->displayOverlay();
     this->window.display();
 }
 
-void Game::displaySideBar(){
-
-    sf::RectangleShape r;
-    r.setSize(sf::Vector2f(300, 500));
-    r.setPosition(800, 0);
-    r.setFillColor(sf::Color(215, 115, 5));
-    this->window.draw(r);
-
-    r.setPosition(800, 500);
-    r.setFillColor(sf::Color(135, 70, 5));
-    this->window.draw(r);
-}
 
 void Game::drawPieces(){
     if(prevFrom.first != -1){
@@ -399,9 +386,9 @@ void Game::initSprite(){
 
 void Game::initText(){
     this->gameOverText.setFont(this->font);
-    this->gameOverText.setString("ABCDE\nWIN!!!");
+    this->gameOverText.setString("SOME1\nWIN!!!");
     this->gameOverText.setCharacterSize(150); // 86
-    this->gameOverText.setPosition( this->gridSize.x * 1 + 18,
+    this->gameOverText.setPosition( this->gridSize.x * 2 - 30,
                                     this->gridSize.y * 2 + 10);
     this->gameOverText.setFillColor(sf::Color::Black);
     this->gameOverText.setStyle(sf::Text::Bold);
@@ -409,7 +396,7 @@ void Game::initText(){
     this->restartText.setFont(this->font);
     this->restartText.setString("Left Click to Restart");
     this->restartText.setCharacterSize(32);
-    this->restartText.setPosition(this->gridSize.x * 1.5 + 16, 
+    this->restartText.setPosition(this->gridSize.x * 2  + 5, 
                                     this->gridSize.y * 5);
     this->restartText.setFillColor(sf::Color::Black);
 }

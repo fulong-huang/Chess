@@ -82,7 +82,6 @@ private:
     void initSprite();
     void drawPieces();
     void displayOverlay();
-    void displaySideBar();
     
 };
 
